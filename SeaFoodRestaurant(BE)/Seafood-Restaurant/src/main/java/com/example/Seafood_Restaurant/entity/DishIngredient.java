@@ -22,8 +22,5 @@ public class DishIngredient {
     Long material_id;
 
     Integer quantity;
-
-    @Column(length = 100)
-    String unit;
 }
 
