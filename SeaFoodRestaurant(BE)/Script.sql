@@ -39,7 +39,6 @@ CREATE TABLE DishIngredient (
     dish_id BIGINT NOT NULL,
     material_id BIGINT NOT NULL,
     quantity INT,
-    unit VARCHAR(100),
     PRIMARY KEY (dish_id, material_id),
     FOREIGN KEY (dish_id) REFERENCES Dish(id) ON DELETE CASCADE
 );
