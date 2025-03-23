@@ -11,6 +11,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^19.0.0",
+    "@angular/cdk": "^19.2.6",
     "@angular/common": "^19.0.0",
     "@angular/compiler": "^19.0.0",
     "@angular/core": "^19.0.0",
@@ -18,9 +19,18 @@
     "@angular/platform-browser": "^19.0.0",
     "@angular/platform-browser-dynamic": "^19.0.0",
     "@angular/router": "^19.0.0",
+    "@api-components/api-endpoint-documentation": "^6.1.2",
+    "@coreui/angular": "^5.3.16",
+    "@coreui/angular-chartjs": "^5.3.16",
+    "@coreui/chartjs": "^4.0.0",
+    "@coreui/icons": "^3.0.1",
+    "@coreui/icons-angular": "^5.3.16",
+    "@coreui/utils": "^2.0.2",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.8",
     "jquery": "^3.7.1",
+    "ngx-scrollbar": "^18.0.0",
     "ngx-spinner": "^19.0.0",
     "owl.carousel": "^2.3.4",
     "popper.js": "^1.16.1",
@@ -29,10 +39,16 @@
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
+  "config": {
+    "theme": "default",
+    "coreui_library_short_version": "5.4",
+    "coreui_library_docs_url": "https://coreui.io/angular/docs/"
+  },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.0.1",
     "@angular/cli": "^19.0.1",
     "@angular/compiler-cli": "^19.0.0",
+    "@angular/localize": "^19.1.6",
     "@types/jasmine": "~5.1.0",
     "jasmine-core": "~5.4.0",
     "karma": "~6.4.0",

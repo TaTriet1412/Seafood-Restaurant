@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
-
+import { SidebarModule } from '@coreui/angular';
 @NgModule({
   declarations: [
     AppComponent
@@ -15,6 +15,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
     AppRoutingModule,
     NgxSpinnerModule,
     BrowserAnimationsModule,
+    SidebarModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -16,16 +16,16 @@ const routes: Routes = [
   },
   { path: 'staff', 
     loadChildren: () => import('./Modules/staff/staff.module').then(m => m.StaffModule), 
-    canActivate: [AuthStaffGuard] 
+    // canActivate: [AuthStaffGuard] 
   },
   { path: 'chef', 
     loadChildren: () => import('./Modules/chef/chef.module').then(m => m.ChefModule), 
     canActivate: [AuthChefGuard] 
   },
   //Khi trang rỗng (ban đầu) thì trang trả về path user 
-  { path: '', redirectTo: 'user', pathMatch: 'full' },
+  { path: '', redirectTo: 'staff', pathMatch: 'full' },
   //Tất cả đường dẫn không tồn tại thì trả về path user
-  { path: '**', redirectTo: 'user' },
+  { path: '**', redirectTo: 'staff' },
 ];
 
 @NgModule({

@@ -2,13 +2,19 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { StaffRoutingModule } from './staff-routing.module';
+import { DefaultUiComponent } from './default-ui/default-ui.component';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [
     CommonModule,
-    StaffRoutingModule
+    StaffRoutingModule,
+    DefaultUiComponent
+  ],
+  exports: [
+    DefaultUiComponent
   ]
 })
 export class StaffModule { }
