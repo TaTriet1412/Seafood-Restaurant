@@ -7,7 +7,6 @@ import { DefaultUiComponent } from '../user/default-ui/default-ui.component';
 
 @NgModule({
   declarations: [
-    DefaultUiComponent
   ],
   imports: [
     CommonModule,

@@ -22,7 +22,7 @@ const routes: Routes = [
     loadChildren: () => import('./Modules/chef/chef.module').then(m => m.ChefModule), 
     canActivate: [AuthChefGuard] 
   },
-  //Khi trang rỗng thì trang trả về path user 
+  //Khi trang rỗng (ban đầu) thì trang trả về path user 
   { path: '', redirectTo: 'user', pathMatch: 'full' },
   //Tất cả đường dẫn không tồn tại thì trả về path user
   { path: '**', redirectTo: 'user' },
