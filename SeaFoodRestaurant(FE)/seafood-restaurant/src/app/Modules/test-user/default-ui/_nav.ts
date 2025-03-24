@@ -1,6 +1,6 @@
 import { INavData } from "@coreui/angular";
 
-const BASE_PATH = '/staff';
+const BASE_PATH = '/test-user';
 
 function prefixUrl(url: string): string {
   // Don't prefix external URLs or empty URLs
