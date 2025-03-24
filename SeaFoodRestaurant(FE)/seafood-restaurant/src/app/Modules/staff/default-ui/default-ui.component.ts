@@ -20,6 +20,7 @@ import { NgScrollbar } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-default-ui',
+  standalone: true,
   imports: [
     SidebarComponent,
     SidebarHeaderComponent,
