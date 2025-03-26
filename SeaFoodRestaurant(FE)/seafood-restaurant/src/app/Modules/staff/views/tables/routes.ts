@@ -9,7 +9,7 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'table-order',
+                redirectTo: 'table-bill',
                 pathMatch: 'full'
             },
             {
@@ -28,6 +28,15 @@ export const routes: Routes = [
                         .then(m => m.TableOrderComponent),
                 data: {
                     title: 'Table-Order'
+                }
+            },
+            {
+                path: 'table-bill',
+                loadComponent: () => 
+                    import('./table-bill/table-bill.component')
+                        .then(m => m.TableBillComponent),
+                data: {
+                    title: 'Bill'
                 }
             },
         ]

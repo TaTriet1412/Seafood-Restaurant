@@ -383,6 +383,12 @@ export class TableOrderComponent implements OnInit {
     this.cdf.detectChanges()
   }
 
+  // Lấy tổng giá tiền 
+  getTotalPrice(): string {
+    const totalPrice = this.ordersData.reduce((total, order) => total + order['price']*order['quantity'],0);  
+    return this.numberFormatService.formatNumber(totalPrice)
+  }
+
   //Lọc dữ liệu cố định
   set columnFilterValue(value) {
     this._columnFilterValue = { ...value };

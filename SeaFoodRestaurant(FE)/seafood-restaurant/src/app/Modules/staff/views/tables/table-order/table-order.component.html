@@ -275,4 +275,36 @@
       </c-card-body>
     </c-card>
   </c-col>
+
+  <c-col xs="12">
+    <c-card class="mb-4 payment-card">
+      <c-card-header>
+        <b> Thanh toán </b>
+      </c-card-header>
+      <c-card-body>
+        <c-row class="align-items-center justify-content-between flex-column flex-md-row">
+          <!-- Nút Thanh toán -->
+          <c-col  md="auto">
+            <button class="btn btn-primary payment-btn m-auto mb-2">
+              <i class="fa-solid fa-credit-card"></i> Thanh toán ngay
+            </button>
+          </c-col>
+  
+          <!-- Thành tiền với icon -->
+          <c-col md="auto" class="text-end">
+            <div class="payment-info d-flex justify-content-between">
+              <div>
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span>Thành tiền:</span>  
+              </div>
+              <span class="payment-amount">{{getTotalPrice()}} VNĐ</span>
+            </div>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  
+  
+  
 </c-row>
