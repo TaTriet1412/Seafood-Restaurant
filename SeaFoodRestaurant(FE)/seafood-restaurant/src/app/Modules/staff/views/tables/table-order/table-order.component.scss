@@ -1,0 +1,49 @@
+@import url('../../../../../../../public/assets/scss/form-multi-select.scss');
+@import url('../../../../../../../public/assets/scss/snackbar.scss');
+
+.align-end {
+  align-items: end;
+}
+
+.custom-action-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; // Khoảng cách giữa icon và chữ
+  font-weight: bold;
+  border-radius: 6px;
+  transition: all 0.3s ease-in-out;
+
+  i {
+    font-size: 14px; // Kích thước icon
+  }
+
+  &:hover {
+    transform: translateY(-2px); // Hiệu ứng nâng lên khi hover
+  }
+
+  &[color="info"] {
+    background-color: #17a2b8; // Màu xanh
+    border: none;
+    color: white;
+
+    &:hover {
+      background-color: #138496;
+    }
+  }
+
+  &[color="danger"] {
+    background-color: #dc3545; // Màu đỏ
+    border: none;
+    color: white;
+
+    &:hover {
+      background-color: #c82333;
+    }
+  }
+}
+
+c-card-body {
+  background-color: #e9f5fc; 
+}

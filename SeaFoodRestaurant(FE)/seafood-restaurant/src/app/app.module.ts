@@ -10,7 +10,8 @@ import { IconModule, IconSetModule, IconSetService } from '@coreui/icons-angular
 import * as allIcons from '@coreui/icons'; // Import all icons
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -21,6 +22,7 @@ import * as allIcons from '@coreui/icons'; // Import all icons
 
     IconModule, 
     IconSetModule,
+
 
   ],
   providers: [

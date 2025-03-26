@@ -1,0 +1,278 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Thêm món</strong>
+      </c-card-header>
+      <c-card-body>
+        <form
+          #tooltipForm="ngForm"
+          (ngSubmit)="onSubmit(tooltipForm)"
+          [validated]="validated"
+          cForm
+          class="row g-3 needs-validation"
+          novalidate
+        >
+          <!-- Phân loại -->
+          <c-col class="position-relative mb-4" [md]="3">
+            <label cLabel for="validationTooltipCategory">Phân loại</label>
+            <select
+              cSelect
+              id="validationTooltipCategory"
+              name="category"
+              required
+              [(ngModel)]="selectedCategory"
+              #category="ngModel"
+              (change)="onCategoryChange($event)"
+              [class.is-invalid]="validated && category.invalid"
+            >
+              <option value="" disabled selected>Chọn phân loại</option>
+              <option
+                *ngFor="let category of menuCategories"
+                [value]="category.value"
+              >
+                {{ category.name }}
+              </option>
+            </select>
+            <c-form-feedback
+              *ngIf="validated && category.invalid"
+              [valid]="false"
+              tooltip
+            >
+              Vui lòng chọn phân loại.
+            </c-form-feedback>
+          </c-col>
+
+          <!-- Tên món ăn -->
+          <c-col class="position-relative mb-4" [md]="5">
+            <label cLabel for="validationTooltipDish">Tên món ăn</label>
+            <select
+              cSelect
+              id="validationTooltipDish"
+              name="dish"
+              required
+              [(ngModel)]="selectedDish"
+              [disabled]="!selectedCategory"
+              #dish="ngModel"
+              [class.is-invalid]="validated && dish.invalid"
+            >
+              <option value="" disabled selected>Chọn món ăn</option>
+              <option *ngFor="let dish of filteredDishes" [value]="dish.value">
+                {{ dish.name }}
+              </option>
+            </select>
+            <c-form-feedback
+              *ngIf="validated && dish.invalid"
+              [valid]="false"
+              tooltip
+            >
+              Vui lòng chọn tên món ăn.
+            </c-form-feedback>
+          </c-col>
+
+          <!-- Số lượng -->
+          <c-col class="position-relative mb-4" [md]="2">
+            <label cLabel for="validationTooltipQuantity">Số lượng</label>
+            <input
+              cFormControl
+              id="validationTooltipQuantity"
+              name="quantity"
+              required
+              type="number"
+              min="1"
+              [(ngModel)]="quantity"
+              #quantityControl="ngModel"
+              [class.is-invalid]="validated && quantityControl.invalid"
+            />
+            <c-form-feedback
+              *ngIf="validated && quantityControl.invalid"
+              [valid]="false"
+              tooltip
+            >
+              Số lượng phải lớn hơn 0.
+            </c-form-feedback>
+          </c-col>
+
+          <!-- Submit and Reset Buttons -->
+          <c-col class="d-flex align-end mb-4" [md]="2">
+            <button cButton color="primary" type="submit">
+              <i class="fas fa-plus me-2"></i>
+              Thêm món
+            </button>
+            <!-- <button (click)="onReset()" cButton color="secondary" type="button" class="ms-2">
+                Đặt lại
+              </button> -->
+          </c-col>
+        </form>
+      </c-card-body>
+    </c-card>
+  </c-col>
+
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <b> Danh sách món ăn </b>
+      </c-card-header>
+      <c-card-body>
+        <c-smart-table
+          #smartTable="cSmartTable"
+          [(columnFilterValue)]="columnFilterValue"
+          [columnFilter]="true"
+          [columnSorter]="true"
+          [columns]="columns"
+          [itemsPerPageSelect]="true"
+          [itemsPerPage]="5"
+          [items]="ordersData"
+          [sorterValue]="{ column: 'name', state: 'asc' }"
+          [tableBodyProps]="{ align: 'middle' }"
+          [tableFilter]="true"
+          [tableFootProps]="{ color: 'warning' }"
+          [tableHeadProps]="{ color: 'warning' }"
+          [tableProps]="{ hover: true, striped: true, responsive: true }"
+          cleaner
+          clickableRows
+          footer
+          header
+          pagination
+          [loading] = !loadedData
+        >
+
+        <!-- Ô chọn trạng thái -->
+
+        <ng-template cTemplateId="columnFilter_status">
+          <c-multi-select (valueChange)="handleValueChange($event)" 
+          [value]="selectedStatus" 
+          multiple 
+          size="sm" 
+          placeholder="Chọn trạng thái"
+          >
+            @for (status of statusList; track status) {
+              <c-multi-select-option [value]="status">{{ translateStatus(status) }}</c-multi-select-option>
+            }
+          </c-multi-select>
+        </ng-template>
+
+        <!-- Nút thông báo nhà bếp và bật tắt chân trang -->
+
+          <ng-template cTemplateId="tableCustomHeader">
+            <div [cCol]="'auto'" class="p-0 ms-auto">
+              <button
+                (click)="onKitchenNotification()"
+                cButton
+                [color]="isNotifyKitchen ? 'secondary' : 'primary'"
+                class="me-2"
+                [disabled]= "isNotifyKitchen"
+              >
+                <i class="fas fa-bullhorn me-1"></i> Thông báo bếp
+              </button>
+        
+
+              <button
+                (click)="smartTable.footer = !smartTable.footer"
+                cButton
+                [color]= "smartTable.footer ? 'success':'danger'"
+              >
+                Chân Bảng : {{ smartTable.footer ? "Bật" : "Tắt" }}
+              </button>
+            </div>
+          </ng-template>
+
+          <ng-template cTemplateId="tableDetails" let-item="item">
+            <div [visible]="this.details_visible[item.id] === true" cCollapse>
+              <c-card class="rounded-0">
+                <c-card-body>
+                  <h5>{{ item["name"] }}</h5>
+                  <p class="text-muted">Số lượng: {{ item["quantity"] }}</p>
+                  <p class="text-muted">Trạng thái: {{ translateStatus(item["status"]) }}</p>
+                </c-card-body>
+                <c-card-footer>
+                  <form 
+                    #tooltipForm="ngForm"
+                    (ngSubmit)="changeQuantitySubmit(tooltipForm,item['id'])"
+                    [validated]="validatedChange"
+                    cForm
+                    class="row g-3 needs-validation"
+                    novalidate
+                  >
+                    <c-col class="position-relative mb-4" [md]="2">
+                      <label cLabel for="validationChangeTooltipQuantity">Số lượng</label>
+                      <input
+                        cFormControl
+                        id="validationChangeTooltipQuantity"
+                        name="quantityToChange"
+                        required
+                        type="number"
+                        [value]="quantityToChange"
+                        min="1"
+                        [(ngModel)]="quantityToChange"
+                        #quantityControl="ngModel"
+                        [class.is-invalid]="validatedChange && quantityControl.invalid"
+                      />
+                      <c-form-feedback
+                        *ngIf="validatedChange && quantityControl.invalid"
+                        [valid]="false"
+                        tooltip
+                      >
+                        Số lượng phải lớn hơn 0.
+                      </c-form-feedback>
+                    </c-col>
+                    <c-col class="d-flex align-end mb-4" [md]="3">
+                      <button cButton class="custom-action-btn p-2 px-4" color="info" size="sm" type="submit">
+                        <i class="fa-solid fa-pencil-alt"></i> Thay đổi
+                      </button>
+                    </c-col>
+                    <c-col class="d-flex align-end mb-4" [md]="2">
+                      <button cButton class="custom-action-btn p-2 ms-1" (click)="deleteOrder(item['id'])" color="danger" size="sm">
+                        <i class="fa-solid fa-trash-alt"></i> Xóa
+                      </button>
+                    </c-col>
+                    
+                  </form>
+
+
+                </c-card-footer>
+              </c-card>
+            </div>
+          </ng-template>
+          
+          <ng-template
+            cTemplateId="tableData"
+            let-columnName="columnName"
+            let-item="item"
+            let-tdContent="tdContent"
+          >
+            <td
+              [cAlign]="smartTable.getTableDataCellProps(item, columnName)['align']"
+              [cTableActive]="smartTable.getTableDataCellProps(item, columnName)['active']"
+              [cTableColor]="smartTable.getTableDataCellProps(item, columnName)['color']"
+              [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
+            >
+              @switch (columnName) { 
+                @case ('status') {
+                  <c-badge [color]="getBadge(tdContent)">
+                    {{ translateStatus(item[columnName]) }}
+                  </c-badge>
+                } 
+                
+                @case ('show') {
+                  <button
+                    (click)="toggleDetails(item.id)"
+                    cButton
+                    color="primary"
+                    size="sm"
+                    variant="outline"
+                  >
+                    Show
+                  </button>
+                } 
+                @default {
+                  {{ tdContent }}
+                } 
+              }
+            </td>
+          </ng-template>
+        </c-smart-table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
