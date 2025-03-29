@@ -1,6 +1,6 @@
 import { INavData } from "@coreui/angular";
 
-const BASE_PATH = '/staff';
+const BASE_PATH = '/chef';
 
 function prefixUrl(url: string): string {
   // Don't prefix external URLs or empty URLs
@@ -13,17 +13,21 @@ function prefixUrl(url: string): string {
 export const navItems: INavData[] = [
   {
     title: true,
-    name: 'Quản lý bàn ăn'
-  },
-  {
-    name: "Danh sách bàn ăn",
-    url: prefixUrl('/tables'),
-    iconComponent: {name: 'cil-fire'}
+    name: 'Quản lý món ăn'
   },
   {
     name: "Danh sách món ăn",
-    url: prefixUrl('/menu'),
+    url: prefixUrl('/dishes'),
     iconComponent: {name: 'cil-fastfood'}
+  },
+  {
+    title: true,
+    name: 'Quản lý đơn hàng'
+  },
+  {
+    name: "Danh sách đơn hàng",
+    url: prefixUrl('/orders'),
+    iconComponent: {name: 'cil-excerpt'}
   }
 ]
 

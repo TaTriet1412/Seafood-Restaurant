@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { StaffRoutingModule } from './staff-routing.module';
 import { DefaultUiComponent } from './default-ui/default-ui.component';
+import { MenuItemsComponent } from './views/menu/menu-items/menu-items.component';
 
 
 @NgModule({

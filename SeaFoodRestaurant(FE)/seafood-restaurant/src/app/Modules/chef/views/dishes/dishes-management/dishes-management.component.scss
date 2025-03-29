@@ -1,0 +1,130 @@
+.payment-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: rgba(73, 82, 208, 0.1);
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(217, 83, 79, 0.2);
+
+  i {
+    font-size: 20px;
+    color: #22ea40;
+  }
+}
+
+.payment-amount {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #2fbc55;
+  background: rgba(217, 83, 79, 0.1);
+  padding: 10px 15px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.h-180 {
+  height: 256px;
+}
+
+.filter-wrapper {
+  display: flex; // Kích hoạt Flexbox
+  align-items: center; // Căn giữa theo chiều dọc
+  justify-content: end;
+  gap: 8px; // Khoảng cách giữa chữ "Lọc:" và ô select
+  margin-bottom: 16px; // Khoảng cách với các thành phần bên dưới
+}
+
+.filter-label {
+  font-size: 1rem; // Kích thước chữ
+  font-weight: bold; // Làm chữ đậm để dễ nhìn
+  color: #495057; // Màu chữ
+  margin: 0; // Loại bỏ margin mặc định
+}
+
+.full-width {
+  width: 100%; // Đảm bảo chiếm toàn bộ chiều rộng
+  margin-bottom: 16px; // Tạo khoảng cách bên dưới (nếu cần)
+  display: flex; // Kích hoạt Flexbox nếu bạn cần căn giữa nội dung
+  justify-content: flex-end; // Đẩy nội dung (ô select) sang phải
+  align-items: center; // Căn giữa theo chiều dọc (nếu cần)
+}
+
+.select-wrapper {
+  display: flex; // Kích hoạt Flexbox
+  justify-content: flex-end; // Căn sang phải
+  align-items: flex-start; // Căn lên trên
+  margin-bottom: 100px; // Khoảng cách bên dưới để tách biệt với các thành phần khác
+}
+
+select[cSelect] {
+  width: 220px; // Chiếm toàn bộ chiều rộng
+  padding: 12px; // Khoảng cách nội dung bên trong
+  font-size: 1rem; // Kích thước chữ dễ nhìn
+  border: 2px solid #007bff; // Viền xanh dương mặc định
+  border-radius: 8px; // Bo góc mềm mại
+  color: #495057; // Màu chữ xám đậm
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Bóng nhẹ ban đầu
+  transition: all 0.3s ease-in-out; // Hiệu ứng mượt mà cho tất cả trạng thái
+
+  &:hover {
+    cursor: pointer; // Thêm con trỏ để chỉ ra khả năng tương tác
+  }
+}
+
+.active-card {
+  border: 3px solid #8e9195; // Viền xanh dương đậm
+  border-radius: 8px; // Bo góc mềm mại
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3); // Hiệu ứng bóng xanh dương
+  transition: all 0.3s ease-in-out; // Hiệu ứng chuyển động mượt mà
+}
+
+.inactive-card {
+  border: 2px dashed #6c757d; // Viền xám nét đứt
+  border-radius: 8px; // Bo góc đồng nhất
+  background-color: #f0f0f0; // Nền màu xám nhạt
+  transition: all 0.3s ease-in-out; // Hiệu ứng chuyển động nhẹ
+}
+
+
+// .blur-image {
+//   filter: grayscale(100%);
+//   opacity: 0.5; // Hiệu ứng làm mờ ảnh
+//   transition: none; // Loại bỏ hiệu ứng hover
+// }
+
+
+.table-number {
+  position: absolute; // Đặt số bàn chồng lên hình ảnh
+  top: 12px; // Cách cạnh trên một khoảng
+  left: 12px; // Cách cạnh trái một khoảng
+  background-color: rgba(0, 0, 0, 0.7); // Nền đen mờ để nổi bật số
+  color: #ffffff; // Màu trắng để tương phản với nền
+  font-size: 2.5rem; // Tăng kích thước chữ để tạo sự chú ý
+  font-weight: bold; // Làm chữ đậm
+  padding: 8px 16px; // Tăng kích thước padding để trông cân đối hơn
+  border-radius: 8px; // Bo góc mềm mại
+  text-align: center; // Căn giữa nội dung số
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); // Hiệu ứng bóng nổi bật
+  z-index: 1; // Hiển thị phía trên hình ảnh
+  border: 2px solid #ffffff; // Viền trắng để làm nổi hơn nữa
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2); /* Màu phủ */
+  border-radius: inherit;
+  z-index: 1;
+}
+
+.blurred-content {
+  opacity: 0.6; /* Làm mờ nội dung */
+  filter: grayscale(80%); /* Làm xám nội dung */
+}

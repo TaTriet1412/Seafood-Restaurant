@@ -5,10 +5,14 @@ import { ChefRoutingModule } from './chef-routing.module';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [
+  ],
   imports: [
     CommonModule,
-    ChefRoutingModule
+    ChefRoutingModule,
+  ],
+  exports: [
+
   ]
 })
 export class ChefModule { }

@@ -1,0 +1,65 @@
+<c-row>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong> Danh sách món ăn </strong>
+        </c-card-header>
+        <c-card-body>
+          <c-row class="mb-3 full-width">
+            <div class="filter-wrapper">
+              <p class="filter-label">Lọc: </p>
+              <select aria-label="Default select example" cSelect (change)="onSelectChange($event)">
+                <option value="all">Tất cả</option>
+                <option value="active">Món đang tắt </option>
+                <option value="inactive">Món đang bật</option>
+              </select>
+            </div>
+          </c-row>
+
+          <c-row [gutter]="4" class="mb-3" [md]="3" [xs]="1">
+            <c-col class="mb-4" *ngFor="let dish of dishes; index as i">
+              <c-card [ngClass]="{ 'active-card': dish.active, 'inactive-card': !dish.active}" class="h-100">
+                <div *ngIf="!dish.active" class="table-number">Hết món</div>
+                <img
+                  class="h-180 object-fit-cover"
+                  cCardImg="top"
+                  [src]="dish['img']"
+                  alt="Ảnh món ăn"
+                  [ngClass]="{ 'blur-image': !dish.active }"
+                />
+                <c-card-body [ngClass]="{ 'blurred-content': !dish.active }" class="position-relative">
+                  <div *ngIf="!dish.active" class="overlay"></div>
+                  <h5 cCardTitle>
+                    {{ dish["name"] }}
+                  </h5>
+                  <p cCardText>
+                    {{ dish["description"] }}
+                  </p>
+                  <div cCardText class="payment-info text-center">
+                    <div>
+                      <i class="fa-solid fa-money-bill-wave me-2"></i>
+                      <span>Giá:</span>
+                    </div>
+                    <span class="payment-amount"
+                      >{{ changePriceVND(dish["price"]) }} VNĐ</span
+                    >
+                  </div>
+                </c-card-body>
+                <c-card-footer class="text-center">
+                  <small class="text-medium-emphasis ">
+                    <button (click)="toggleBtnDishState(dish.id)" *ngIf="dish.active" class="btn btn-danger text-white">
+                      Tắt món <i class="fas fa-toggle-off"></i>
+                    </button>
+                    <button (click)="toggleBtnDishState(dish.id)" *ngIf="!dish.active" class="btn btn-success text-white">
+                      Bật món <i class="fas fa-toggle-on"></i>
+                    </button>
+                  </small>
+                </c-card-footer>
+              </c-card>
+            </c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+  

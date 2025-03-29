@@ -134,25 +134,27 @@
           footer
           header
           pagination
-          [loading] = !loadedData
+          [loading]="!loadedData"
         >
+          <!-- Ô chọn trạng thái -->
 
-        <!-- Ô chọn trạng thái -->
+          <ng-template cTemplateId="columnFilter_status">
+            <c-multi-select
+              (valueChange)="handleValueChange($event)"
+              [value]="selectedStatus"
+              multiple
+              size="sm"
+              placeholder="Chọn trạng thái"
+            >
+              @for (status of statusList; track status) {
+              <c-multi-select-option [value]="status">{{
+                translateStatus(status)
+              }}</c-multi-select-option>
+              }
+            </c-multi-select>
+          </ng-template>
 
-        <ng-template cTemplateId="columnFilter_status">
-          <c-multi-select (valueChange)="handleValueChange($event)" 
-          [value]="selectedStatus" 
-          multiple 
-          size="sm" 
-          placeholder="Chọn trạng thái"
-          >
-            @for (status of statusList; track status) {
-              <c-multi-select-option [value]="status">{{ translateStatus(status) }}</c-multi-select-option>
-            }
-          </c-multi-select>
-        </ng-template>
-
-        <!-- Nút thông báo nhà bếp và bật tắt chân trang -->
+          <!-- Nút thông báo nhà bếp và bật tắt chân trang -->
 
           <ng-template cTemplateId="tableCustomHeader">
             <div [cCol]="'auto'" class="p-0 ms-auto">
@@ -161,16 +163,15 @@
                 cButton
                 [color]="isNotifyKitchen ? 'secondary' : 'primary'"
                 class="me-2"
-                [disabled]= "isNotifyKitchen"
+                [disabled]="isNotifyKitchen"
               >
                 <i class="fas fa-bullhorn me-1"></i> Thông báo bếp
               </button>
-        
 
               <button
                 (click)="smartTable.footer = !smartTable.footer"
                 cButton
-                [color]= "smartTable.footer ? 'success':'danger'"
+                [color]="smartTable.footer ? 'success' : 'danger'"
               >
                 Chân Bảng : {{ smartTable.footer ? "Bật" : "Tắt" }}
               </button>
@@ -183,19 +184,23 @@
                 <c-card-body>
                   <h5>{{ item["name"] }}</h5>
                   <p class="text-muted">Số lượng: {{ item["quantity"] }}</p>
-                  <p class="text-muted">Trạng thái: {{ translateStatus(item["status"]) }}</p>
+                  <p class="text-muted">
+                    Trạng thái: {{ translateStatus(item["status"]) }}
+                  </p>
                 </c-card-body>
                 <c-card-footer>
-                  <form 
+                  <form
                     #tooltipForm="ngForm"
-                    (ngSubmit)="changeQuantitySubmit(tooltipForm,item['id'])"
+                    (ngSubmit)="changeQuantitySubmit(tooltipForm, item['id'])"
                     [validated]="validatedChange"
                     cForm
                     class="row g-3 needs-validation"
                     novalidate
                   >
                     <c-col class="position-relative mb-4" [md]="2">
-                      <label cLabel for="validationChangeTooltipQuantity">Số lượng</label>
+                      <label cLabel for="validationChangeTooltipQuantity"
+                        >Số lượng</label
+                      >
                       <input
                         cFormControl
                         id="validationChangeTooltipQuantity"
@@ -206,7 +211,9 @@
                         min="1"
                         [(ngModel)]="quantityToChange"
                         #quantityControl="ngModel"
-                        [class.is-invalid]="validatedChange && quantityControl.invalid"
+                        [class.is-invalid]="
+                          validatedChange && quantityControl.invalid
+                        "
                       />
                       <c-form-feedback
                         *ngIf="validatedChange && quantityControl.invalid"
@@ -217,24 +224,33 @@
                       </c-form-feedback>
                     </c-col>
                     <c-col class="d-flex align-end mb-4" [md]="3">
-                      <button cButton class="custom-action-btn p-2 px-4" color="info" size="sm" type="submit">
+                      <button
+                        cButton
+                        class="custom-action-btn p-2 px-4"
+                        color="info"
+                        size="sm"
+                        type="submit"
+                      >
                         <i class="fa-solid fa-pencil-alt"></i> Thay đổi
                       </button>
                     </c-col>
                     <c-col class="d-flex align-end mb-4" [md]="2">
-                      <button cButton class="custom-action-btn p-2 ms-1" (click)="deleteOrder(item['id'])" color="danger" size="sm">
+                      <button
+                        cButton
+                        class="custom-action-btn p-2 ms-1"
+                        (click)="deleteOrder(item['id'])"
+                        color="danger"
+                        size="sm"
+                      >
                         <i class="fa-solid fa-trash-alt"></i> Xóa
                       </button>
                     </c-col>
-                    
                   </form>
-
-
                 </c-card-footer>
               </c-card>
             </div>
           </ng-template>
-          
+
           <ng-template
             cTemplateId="tableData"
             let-columnName="columnName"
@@ -242,33 +258,34 @@
             let-tdContent="tdContent"
           >
             <td
-              [cAlign]="smartTable.getTableDataCellProps(item, columnName)['align']"
-              [cTableActive]="smartTable.getTableDataCellProps(item, columnName)['active']"
-              [cTableColor]="smartTable.getTableDataCellProps(item, columnName)['color']"
+              [cAlign]="
+                smartTable.getTableDataCellProps(item, columnName)['align']
+              "
+              [cTableActive]="
+                smartTable.getTableDataCellProps(item, columnName)['active']
+              "
+              [cTableColor]="
+                smartTable.getTableDataCellProps(item, columnName)['color']
+              "
               [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
             >
-              @switch (columnName) { 
-                @case ('status') {
-                  <c-badge [color]="getBadge(tdContent)">
-                    {{ translateStatus(item[columnName]) }}
-                  </c-badge>
-                } 
-                
-                @case ('show') {
-                  <button
-                    (click)="toggleDetails(item.id)"
-                    cButton
-                    color="primary"
-                    size="sm"
-                    variant="outline"
-                  >
-                    Show
-                  </button>
-                } 
-                @default {
-                  {{ tdContent }}
-                } 
-              }
+              @switch (columnName) { @case ('status') {
+              <c-badge [color]="getBadge(tdContent)">
+                {{ translateStatus(item[columnName]) }}
+              </c-badge>
+              } @case ('show') {
+              <button
+                (click)="toggleDetails(item.id)"
+                cButton
+                color="primary"
+                size="sm"
+                variant="outline"
+              >
+                Show
+              </button>
+              } @default {
+              {{ tdContent }}
+              } }
             </td>
           </ng-template>
         </c-smart-table>
@@ -282,29 +299,28 @@
         <b> Thanh toán </b>
       </c-card-header>
       <c-card-body>
-        <c-row class="align-items-center justify-content-between flex-column flex-md-row">
+        <c-row
+          class="align-items-center justify-content-between flex-column flex-md-row"
+        >
           <!-- Nút Thanh toán -->
-          <c-col  md="auto">
+          <c-col md="auto">
             <button class="btn btn-primary payment-btn m-auto mb-2">
               <i class="fa-solid fa-credit-card"></i> Thanh toán ngay
             </button>
           </c-col>
-  
+
           <!-- Thành tiền với icon -->
           <c-col md="auto" class="text-end">
             <div class="payment-info d-flex justify-content-between">
               <div>
                 <i class="fa-solid fa-money-bill-wave"></i>
-                <span>Thành tiền:</span>  
+                <span>Thành tiền:</span>
               </div>
-              <span class="payment-amount">{{getTotalPrice()}} VNĐ</span>
+              <span class="payment-amount">{{ getTotalPrice() }} VNĐ</span>
             </div>
           </c-col>
         </c-row>
       </c-card-body>
     </c-card>
   </c-col>
-  
-  
-  
 </c-row>

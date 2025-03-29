@@ -1,0 +1,81 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong> Chi tiết đơn hàng </strong>
+      </c-card-header>
+      <c-card-body>
+        <c-smart-table
+          #smartTable="cSmartTable"
+          [columnSorter]="true"
+          [columns]="columns"
+          [itemsPerPageSelect]="true"
+          [itemsPerPage]="5"
+          [items]="ordersDetailData"
+          [sorterValue]="{ column: 'name', state: 'asc' }"
+          [tableBodyProps]="{ align: 'middle' }"
+          [tableFilter]="true"
+          [tableFootProps]="{ color: 'warning' }"
+          [tableHeadProps]="{ color: 'warning' }"
+          [tableProps]="{ hover: true, striped: true, responsive: true }"
+          cleaner
+          clickableRows
+          footer
+          header
+          pagination
+          [loading]="!loadedData"
+        >
+          <ng-template
+            cTemplateId="tableData"
+            let-columnName="columnName"
+            let-item="item"
+            let-tdContent="tdContent"
+          >
+            <td
+              [cAlign]="
+                smartTable.getTableDataCellProps(item, columnName)['align']
+              "
+              [cTableActive]="
+                smartTable.getTableDataCellProps(item, columnName)['active']
+              "
+              [cTableColor]="
+                smartTable.getTableDataCellProps(item, columnName)['color']
+              "
+              [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
+            >
+              @switch (columnName) { @case ('status') {
+              <c-badge [color]="getBadge(tdContent)">
+                {{ translateStatus(item[columnName]) }}
+              </c-badge>
+              } @case ('accept') {
+              <button 
+                cButton 
+                color="success" 
+                size="sm" 
+                variant="outline"
+                [disabled]="isBlockBtnState(item['id'])"  
+              >
+                <i class="fa-solid fa-circle-check"></i>
+                Hoàn thành
+              </button>
+              } @case ('reject') {
+              <button 
+                cButton 
+                color="danger" 
+                size="sm" 
+                variant="outline"
+                [disabled]="isBlockBtnState(item['id'])"  
+              >
+                <i class="fa-solid fa-ban"></i>
+                Hủy món
+              </button>
+              }@default {
+                {{ tdContent }}
+              }}
+            </td>
+          </ng-template>
+        </c-smart-table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

@@ -235,30 +235,30 @@ export class TableOrderComponent implements OnInit {
       // Bật nút để thông báo cho bếp
       this.isNotifyKitchen = false;
 
-
       const dish = this.getSelectedDish();
       if (dish) {
-        // Tìm xem món đã có trong ordersData chưa (dựa trên name hoặc value)
-        const existingOrderIndex = this.ordersData.findIndex(
-          order => order['name'] === dish.name
-        );
+        // // Tìm xem món đã có trong ordersData chưa (dựa trên name hoặc value)
+        // const existingOrderIndex = this.ordersData.findIndex(
+        //   order => order['name'] === dish.name
+        // );
   
-        if (existingOrderIndex !== -1) {
-          // Nếu món đã tồn tại, cập nhật số lượng và trạng thái
-          const updatedOrders = [...this.ordersData];
-          updatedOrders[existingOrderIndex] = {
-            ...updatedOrders[existingOrderIndex],
-            quantity: updatedOrders[existingOrderIndex]['quantity'] + this.quantity,
-            total: this.numberFormatService.formatNumber(
-              (updatedOrders[existingOrderIndex]['quantity'] + this.quantity) * 
-              updatedOrders[existingOrderIndex]['price']
-            ),
-            status: 'Inactive',
-            _props: { color: 'secondary', align: 'middle' }
-          };
+        // if (existingOrderIndex !== -1) {
+        //   // Nếu món đã tồn tại, cập nhật số lượng và trạng thái
+        //   const updatedOrders = [...this.ordersData];
+        //   updatedOrders[existingOrderIndex] = {
+        //     ...updatedOrders[existingOrderIndex],
+        //     quantity: updatedOrders[existingOrderIndex]['quantity'] + this.quantity,
+        //     total: this.numberFormatService.formatNumber(
+        //       (updatedOrders[existingOrderIndex]['quantity'] + this.quantity) * 
+        //       updatedOrders[existingOrderIndex]['price']
+        //     ),
+        //     status: 'Inactive',
+        //     _props: { color: 'secondary', align: 'middle' }
+        //   };
           
-          this.ordersData = updatedOrders;
-        } else {
+        //   this.ordersData = updatedOrders;
+        // } else {
+        // }
           // Nếu món chưa tồn tại, thêm mới
           const newOrder: IItem = {
             id: this.nextId++,
@@ -271,7 +271,6 @@ export class TableOrderComponent implements OnInit {
           };
           
           this.ordersData = [...this.ordersData, newOrder];
-        }
         
         this.onReset();
       }

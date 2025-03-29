@@ -1,0 +1,84 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Danh sách đơn hàng</strong>
+      </c-card-header>
+      <c-card-body>
+        <c-smart-table
+          #smartTable="cSmartTable"
+          [columnFilter]="false"
+          [columnSorter]="true"
+          [columns]="columns"
+          [itemsPerPageSelect]="true"
+          [itemsPerPage]="5"
+          [items]="ordersSessionData"
+          [sorterValue]="{ column: 'name', state: 'asc' }"
+          [tableBodyProps]="{ align: 'middle' }"
+          [tableFilter]="true"
+          [tableFootProps]="{ color: 'warning' }"
+          [tableHeadProps]="{ color: 'warning' }"
+          [tableProps]="{ hover: true, striped: true, responsive: true }"
+          cleaner
+          clickableRows
+          footer
+          header
+          pagination
+          [loading]="!loadedData"
+        >
+          <!-- Nút thông báo bật tắt chân trang -->
+
+          <ng-template cTemplateId="tableCustomHeader">
+            <div [cCol]="'auto'" class="p-0 ms-auto">
+              <button
+                (click)="smartTable.footer = !smartTable.footer"
+                cButton
+                [color]="smartTable.footer ? 'success' : 'danger'"
+              >
+                Chân Bảng : {{ smartTable.footer ? "Bật" : "Tắt" }}
+              </button>
+            </div>
+          </ng-template>
+
+          <ng-template
+            cTemplateId="tableData"
+            let-columnName="columnName"
+            let-item="item"
+            let-tdContent="tdContent"
+          >
+            <td
+              [cAlign]="
+                smartTable.getTableDataCellProps(item, columnName)['align']
+              "
+              [cTableActive]="
+                smartTable.getTableDataCellProps(item, columnName)['active']
+              "
+              [cTableColor]="
+                smartTable.getTableDataCellProps(item, columnName)['color']
+              "
+              [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
+            >
+              @switch (columnName) { 
+                @case ('created_at') {
+                    {{ tdContent | date:'HH:mm:ss dd/MM/yyyy'}}
+                }
+                @case ('show') {
+              <button
+                cButton
+                [color]="item['status'] == 'Pending' ? 'primary' : 'success'"
+                size="sm"
+                variant="outline"
+                class="w-100"
+              >
+                  {{item['status'] == 'Pending' ? 'Chi tiết' : 'Bắt đầu nấu' }}
+              </button>
+              } @default {
+              {{ tdContent }}
+              } }
+            </td>
+          </ng-template>
+        </c-smart-table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

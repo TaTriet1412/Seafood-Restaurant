@@ -13,7 +13,11 @@ const routes: Routes = [
         path: 'tables',
         loadChildren: () => import('./views/tables/routes').then(m => m.routes)
       },
-      { path: "", redirectTo: 'tables', pathMatch: 'full'},
+      {
+        path: 'menu',
+        loadChildren: () => import('./views/menu/routes').then(m => m.routes)
+      },
+      { path: "", redirectTo: 'menu', pathMatch: 'full'},
 
 
       // {

@@ -1,0 +1,45 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong> Danh sách món ăn </strong>
+      </c-card-header>
+      <c-card-body>
+        <c-row gutter="4" class="mb-3" [md]="3" [xs]="1">
+          <c-col class="mb-4" *ngFor="let dish of dishes; index as i">
+            <c-card class="h-100">
+              <img
+                class="h-180 object-fit-cover"
+                cCardImg="top"
+                [src]="dish['img']"
+                alt="Ảnh món ăn"
+              />
+              <c-card-body>
+                <h5 cCardTitle>
+                  {{ dish["name"] }}
+                </h5>
+                <p cCardText>
+                  {{ dish["description"] }}
+                </p>
+                <div cCardText class="payment-info text-center">
+                  <div>
+                    <i class="fa-solid fa-money-bill-wave me-2"></i>
+                    <span>Giá:</span>
+                  </div>
+                  <span class="payment-amount"
+                    >{{ changePriceVND(dish["price"]) }} VNĐ</span
+                  >
+                </div>
+              </c-card-body>
+              <c-card-footer>
+                <small class="text-medium-emphasis">
+                  {{ dish["update_description"] }}
+                </small>
+              </c-card-footer>
+            </c-card>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

@@ -9,7 +9,7 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'table-bill',
+                redirectTo: 'tables-management',
                 pathMatch: 'full'
             },
             {

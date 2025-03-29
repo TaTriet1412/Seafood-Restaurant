@@ -41,7 +41,6 @@ export class TableBillComponent implements OnInit {
         quantity: 2,
         price: 50000,
         total: this.numberFormatService.formatNumber(100000),
-        _props: { color: 'warning', align: 'middle' }
       },
       {
         id: 2,
@@ -49,7 +48,6 @@ export class TableBillComponent implements OnInit {
         quantity: 1,
         price: 40000,
         total: this.numberFormatService.formatNumber(40000),
-        _props: { color: 'warning', align: 'middle' }
       },
       {
         id: 3,
@@ -57,7 +55,6 @@ export class TableBillComponent implements OnInit {
         quantity: 3,
         price: 10000,
         total: this.numberFormatService.formatNumber(30000),
-        _props: { color: 'success', align: 'middle' }
       }
     ];
   }
