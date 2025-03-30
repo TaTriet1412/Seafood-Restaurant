@@ -1,0 +1,113 @@
+<c-row ngPreserveWhitespaces>
+    <!-- Bill Header Info Card -->
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong>Chi tiết Hóa đơn #{{ billDetails?.id ?? 'N/A' }}</strong>
+        </c-card-header>
+        <c-card-body *ngIf="billDetails; else loadingDetails">
+          <dl class="row">
+            <dt class="col-sm-3">Bàn:</dt>
+            <dd class="col-sm-9">{{ billDetails.tableName }}</dd>
+  
+            <dt class="col-sm-3">Nhân viên:</dt>
+            <dd class="col-sm-9">{{ billDetails.staffName }}</dd>
+  
+            <dt class="col-sm-3">Thời gian tạo:</dt>
+            <dd class="col-sm-9">{{ billDetails.createdAt | date:'dd/MM/yyyy HH:mm:ss' }}</dd>
+  
+            <dt class="col-sm-3">Tổng tiền HĐ:</dt>
+            <dd class="col-sm-9"><strong>{{ calculateTotalItemPrice() | number:'1.0-0' }} VNĐ</strong></dd>
+          </dl>
+        </c-card-body>
+        <ng-template #loadingDetails>
+          <c-card-body>Đang tải chi tiết hóa đơn...</c-card-body>
+        </ng-template>
+      </c-card>
+    </c-col>
+  
+    <!-- Bill Items Card -->
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong>Các món trong hóa đơn</strong>
+        </c-card-header>
+        <c-card-body>
+          <div *ngIf="billItems.length > 0; else noItems" class="table-responsive">
+            <table [striped]="true" cTable class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Món ăn</th>
+                  <th scope="col" class="text-center">Số lượng</th>
+                  <th scope="col" class="text-end">Đơn giá</th>
+                  <th scope="col" class="text-end">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of billItems; let i = index">
+                  <th scope="row">{{ i + 1 }}</th>
+                  <td>{{ item.name }}</td>
+                  <td class="text-center">{{ item.quantity }}</td>
+                  <td class="text-end">{{ item.price | number:'1.0-0' }} VNĐ</td>
+                  <td class="text-end"><strong>{{ (item.price * item.quantity) | number:'1.0-0' }} VNĐ</strong></td>
+                </tr>
+              </tbody>
+               <tfoot>
+                  <tr>
+                      <td colspan="4" class="text-end fw-bold">Tổng cộng:</td>
+                      <td class="text-end fw-bold">{{ calculateTotalItemPrice() | number:'1.0-0' }} VNĐ</td>
+                  </tr>
+               </tfoot>
+            </table>
+          </div>
+          <ng-template #noItems>
+             <p class="text-muted">Không có món nào trong hóa đơn này.</p>
+          </ng-template>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  
+  
+    <!-- Log Card -->
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong>Lịch sử Hóa đơn</strong>
+        </c-card-header>
+        <c-card-body>
+          <div *ngIf="billLogs.length > 0; else noLogs" class="table-responsive">
+            <table [striped]="true" cTable class="table table-sm"> <!-- table-sm for smaller padding -->
+              <thead>
+                <tr>
+                  <th scope="col" style="width: 25%;">Thời gian</th>
+                  <th scope="col" style="width: 50%;">Hành động</th>
+                  <th scope="col" style="width: 25%;">Người thực hiện</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Loop through displayedLogs -->
+                <tr *ngFor="let log of displayedLogs">
+                  <td>{{ log.timestamp | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                  <td>{{ log.action }}</td>
+                  <td>{{ log.user }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-template #noLogs>
+              <p class="text-muted">Không có lịch sử nào cho hóa đơn này.</p>
+          </ng-template>
+  
+          <!-- Toggle Button -->
+          <div class="text-center mt-3" *ngIf="billLogs.length > maxInitialLogs">
+            <button cButton color="secondary" variant="outline" size="sm" (click)="toggleShowLogs()">
+              {{ getToggleLogButtonText() }}
+              <i class="fa-solid" [class.fa-chevron-down]="!showAllLogs" [class.fa-chevron-up]="showAllLogs"></i> <!-- Add chevron icon -->
+            </button>
+          </div>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  
+  </c-row>

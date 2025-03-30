@@ -1,0 +1,77 @@
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Hóa đơn</strong>
+        <!-- Đổi tiêu đề -->
+      </c-card-header>
+      <c-card-body>
+        <table [striped]="true" cTable>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Món ăn</th>
+              <th>Số lượng</th>
+              <th>Đơn giá</th>
+              <th>Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let bill of bills">
+              <th scope="row">{{ bill.id }}</th>
+              <td>{{ bill.name }}</td>
+              <td>{{ bill.quantity }}</td>
+              <td>{{ bill.price | number }} VNĐ</td>
+              <td>{{ bill.total }} VNĐ</td>
+            </tr>
+          </tbody>
+        </table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+
+  <c-col xs="12">
+    <c-card class="mb-4 payment-card">
+      <c-card-header>
+        <b> Thanh toán </b>
+      </c-card-header>
+      <c-card-body>
+        <c-row
+          class="align-items-center justify-content-between flex-column flex-md-row"
+        >
+        <!-- Phần ghi chú -->
+         <c-col md="auto">
+             <c-input-group class="mb-3">
+                 <span cInputGroupText id="inputGroup-sizing-default">Ghi chú</span>
+                 <input aria-describedby="inputGroup-sizing-default"
+                     aria-label="Sizing example input"
+                     cFormControl
+                 />
+             </c-input-group>
+         </c-col>
+
+          <!-- Thành tiền với icon -->
+          <c-col md="auto" class="text-end">
+            <div class="payment-info d-flex justify-content-between">
+              <div>
+                <i class="fa-solid fa-money-bill-wave"></i>
+                <span>Thành tiền:</span>
+              </div>
+              <span class="payment-amount">{{ getTotalPrice() }} VNĐ</span>
+            </div>
+          </c-col>
+
+          <!-- Nút Thanh toán -->
+          <c-col md="auto">
+            <button class="btn btn-primary payment-btn m-auto mb-2">
+                <div class="payment_logo">
+                    <img src="/assets/images/payment/vnpay-logo.jpg" alt="vnpay" class="img_logo">
+                </div>
+                Xác nhận thanh toán 
+            </button>
+          </c-col>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

@@ -1,0 +1,139 @@
+<!-- bills-date.component.html -->
+<c-row ngPreserveWhitespaces>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong> Lọc Hóa Đơn Theo Ngày/Tháng/Năm </strong>
+      </c-card-header>
+      <c-card-body>
+        <c-row>
+          <!-- Chọn kiểu lọc -->
+          <c-col md="4">
+            <label cLabel for="filterTypeSelect">Chọn kiểu lọc</label>
+            <select
+              id="filterTypeSelect"
+              class="form-select"
+              [(ngModel)]="selectedFilter"
+              (change)="onFilterTypeChange()"
+            >
+              <option value="year">Lọc theo năm</option>
+              <option value="month">Lọc theo tháng</option>
+              <option value="day">Lọc theo ngày</option>
+            </select>
+          </c-col>
+
+          <!-- Chọn giá trị -->
+          <c-col md="4">
+            <label cLabel for="dateValuePicker">Chọn {{ filterLabel }}</label>
+            <c-date-picker
+              id="dateValuePicker"
+              [selectionType]="selectedFilter"
+              [locale]="'vi-VN'"
+              placeholder="Chọn giá trị..."
+              #datePickerInstance
+              inputReadOnly
+              [format]="dateFormat"
+              [(ngModel)]="selectedValue"
+              (ngModelChange)="onDateChange($event)"
+            ></c-date-picker>
+
+            <!-- Optional: Display selected value for debugging
+            <div *ngIf="selectedValue" class="mt-2">
+              Giá trị được chọn (Raw Date Object): {{ selectedValue | date:'medium' }} <br />
+            </div>
+             -->
+          </c-col>
+
+
+        </c-row>
+      </c-card-body>
+    </c-card>
+
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong> Danh sách phiếu tính tiền </strong>
+      </c-card-header>
+      <c-card-body>
+
+        <c-smart-table
+          #smartTable="cSmartTable"
+          [columnFilter]="true"
+          [columnSorter]="true"
+          [columns]="columns"
+          [itemsPerPageSelect]="true"
+          [itemsPerPage]="5"
+          [items]="filteredBillsData" 
+          [sorterValue]="{ column: 'created_at', state: 'desc' }" 
+          [tableBodyProps]="{ align: 'middle' }"
+          [tableFilter]="true"
+          [tableFootProps]="{ color: 'warning' }"
+          [tableHeadProps]="{ color: 'warning' }"
+          [tableProps]="{ hover: true, striped: true, responsive: true }"
+          cleaner
+          clickableRows
+          footer
+          header
+          pagination
+          [loading]="loadingData"
+        >
+          <ng-template cTemplateId="tableCustomHeader">
+            <div [cCol]="'auto'" class="p-0 ms-auto">
+              <button
+                (click)="smartTable.footer = !smartTable.footer"
+                cButton
+                [color]="smartTable.footer ? 'success' : 'danger'"
+              >
+                Chân Bảng : {{ smartTable.footer ? "Bật" : "Tắt" }}
+              </button>
+            </div>
+          </ng-template>
+          <ng-template
+            cTemplateId="tableData"
+            let-columnName="columnName"
+            let-item="item"
+            let-tdContent="tdContent"
+          >
+            <td
+              [cAlign]="
+                smartTable.getTableDataCellProps(item, columnName)['align']
+              "
+              [cTableActive]="
+                smartTable.getTableDataCellProps(item, columnName)['active']
+              "
+              [cTableColor]="
+                smartTable.getTableDataCellProps(item, columnName)['color']
+              "
+              [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
+            >
+              @switch (columnName) {
+                @case ('created_at') {
+                  <!-- Display Date/Time -->
+                  {{ tdContent | date:'HH:mm:ss dd/MM/yyyy'}}
+                }
+                @case ('total') {
+                    <!-- Format Currency (example) -->
+                    {{ tdContent | number:'1.0-0' }} VND
+                }
+                @case ('detail') {
+                  <button
+                    cButton
+                    [color]="'primary'"
+                    size="sm"
+                    variant="outline"
+                    class="w-100"
+                    (click)="viewDetail(item)" 
+                  >
+                    {{'Xem'}}
+                  </button>
+                }
+                @default {
+                  {{ tdContent }}
+                }
+              }
+            </td>
+          </ng-template>
+        </c-smart-table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

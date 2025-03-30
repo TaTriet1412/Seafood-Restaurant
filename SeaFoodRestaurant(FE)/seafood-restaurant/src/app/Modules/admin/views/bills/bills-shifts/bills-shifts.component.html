@@ -1,0 +1,142 @@
+<c-row ngPreserveWhitespaces>
+    <c-col xs="12">
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong> Lọc Hóa Đơn Theo Ca </strong>
+        </c-card-header>
+        <c-card-body>
+          <c-row class="align-items-end">
+            <c-col md="4" class="mb-3">
+              <label cLabel for="dateValuePicker">Chọn ngày</label>
+              <c-date-picker
+                id="dateValuePicker"
+                [locale]="'vi-VN'"
+                placeholder="Chọn giá trị..."
+                #datePickerInstance
+                inputReadOnly
+                [(ngModel)]="selectedValue"
+                (ngModelChange)="onDateChange($event)"
+              ></c-date-picker>
+            </c-col>
+            <c-col md="3" class="mb-3">
+              <label cLabel for="shiftSelect">Lọc theo ca</label>
+              <select
+                id="shiftSelect"
+                [disabled]="!selectedDate"
+                aria-label="Chọn ca làm việc"
+                cSelect
+                [(ngModel)]="selectedShift"
+                (ngModelChange)="onShiftSelectChange($event)"
+              >
+                <option value="">-- Tất cả ca --</option>
+                <option value="a">Ca Sáng (A)</option>
+                <option value="b">Ca Chiều (B)</option>
+              </select>
+            </c-col>
+          </c-row>
+        </c-card-body>
+      </c-card>
+  
+      <c-card class="mb-4">
+        <c-card-header>
+          <strong> Danh sách phiếu tính tiền </strong>
+          <ng-container *cTemplateId="'tableCustomHeader'">
+            <div [cCol]="'auto'" class="ms-auto">
+              <button
+                (click)="smartTable.cleaner = !smartTable.cleaner"
+                cButton
+                size="sm"
+                variant="outline"
+                [color]="smartTable.cleaner ? 'success' : 'danger'"
+                class="ms-2"
+              >
+                Lọc Cột: {{ smartTable.cleaner ? "Bật" : "Tắt" }}
+              </button>
+              <button
+                (click)="smartTable.tableFilter = !smartTable.tableFilter"
+                cButton
+                size="sm"
+                variant="outline"
+                [color]="smartTable.tableFilter ? 'success' : 'danger'"
+                class="ms-2"
+              >
+                Tìm Kiếm: {{ smartTable.tableFilter ? "Bật" : "Tắt" }}
+              </button>
+            </div>
+          </ng-container>
+        </c-card-header>
+        <c-card-body>
+          <c-smart-table
+            #smartTable="cSmartTable"
+            [columnFilter]="true"
+            [columnSorter]="true"
+            [columns]="columns"
+            [itemsPerPageSelect]="true"
+            [itemsPerPage]="10"
+            [items]="billsData"
+            [sorterValue]="{ column: 'id', state: 'asc' }"
+            [tableBodyProps]="{ align: 'middle' }"
+            [tableFilter]="true"
+            [tableHeadProps]="{ color: 'warning' }"
+            [tableFootProps]="{ color: 'warning' }"
+            [tableProps]="{ hover: true, striped: true, responsive: true }"
+            [loading]="!loadedData"
+            cleaner
+            clickableRows
+            header
+            footer
+            pagination
+            >
+            <ng-template cTemplateId="tableCustomHeader">
+                <div [cCol]="'auto'" class="p-0 ms-auto">
+                  <button
+                    (click)="smartTable.footer = !smartTable.footer"
+                    cButton
+                    [color]="smartTable.footer ? 'success' : 'danger'"
+                  >
+                    Chân Bảng : {{ smartTable.footer ? "Bật" : "Tắt" }}
+                  </button>
+                </div>
+              </ng-template>
+            <ng-template
+              cTemplateId="tableData"
+              let-columnName="columnName"
+              let-item="item"
+              let-tdContent="tdContent"
+            >
+              <td
+                [cAlign]="smartTable.getTableDataCellProps(item, columnName)['align']"
+                [cTableActive]="smartTable.getTableDataCellProps(item, columnName)['active']"
+                [cTableColor]="smartTable.getTableDataCellProps(item, columnName)['color']"
+                [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
+              >
+                @switch (columnName) {
+                  @case ('date') {
+                    {{ tdContent | date:'dd/MM/yyyy' }}
+                  }
+                  @case ('detail') {
+                    <button
+                      cButton
+                      color="info"
+                      size="sm"
+                      variant="outline"
+                      class="w-100"
+                      (click)="$event.stopPropagation()"
+                    >
+                      Xem
+                    </button>
+                  }
+                  @case ('total') {
+                    {{ tdContent | number:'1.0-0':'vi-VN' }} đ
+                  }
+                  @default {
+                   {{ tdContent }}
+                  }
+                }
+              </td>
+            </ng-template>
+          </c-smart-table>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>

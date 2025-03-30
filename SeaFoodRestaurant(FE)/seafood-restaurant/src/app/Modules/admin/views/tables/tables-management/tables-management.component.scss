@@ -1,0 +1,161 @@
+.active-card {
+  border: 3px solid #8e9195; // Viền xanh dương đậm
+  border-radius: 8px; // Bo góc mềm mại
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3); // Hiệu ứng bóng xanh dương
+  transition: all 0.3s ease-in-out; // Hiệu ứng chuyển động mượt mà
+}
+
+.inactive-card {
+  border: 2px dashed #6c757d; // Viền xám nét đứt
+  border-radius: 8px; // Bo góc đồng nhất
+  background-color: #f0f0f0; // Nền màu xám nhạt
+  transition: all 0.3s ease-in-out; // Hiệu ứng chuyển động nhẹ
+}
+
+.blur-image {
+  filter: grayscale(100%);
+  opacity: 0.5; // Hiệu ứng làm mờ ảnh
+  transition: none; // Loại bỏ hiệu ứng hover
+}
+
+.card-body {
+  display: flex; // Sử dụng Flexbox
+  flex-direction: column; // Xếp các phần tử theo cột (dọc)
+  justify-content: center; // Căn giữa theo chiều dọc
+  align-items: center; // Căn giữa theo chiều ngang
+  min-height: 100px;
+  padding: 16px; // Khoảng cách nội dung
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Bóng nhẹ
+}
+
+c-card-footer {
+  display: flex; // Sử dụng Flexbox
+  justify-content: center; // Căn giữa theo chiều ngang
+  align-items: center; // Căn giữa nội dung trong footer
+  border-radius: 0 0 8px 8px; // Bo góc dưới
+  padding: 8px;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1); // Bóng xanh dương mềm mại
+}
+
+h5[cCardTitle] {
+  font-size: 1.25rem; // Kích thước chữ lớn hơn
+  font-weight: bold; // Chữ đậm để nhấn mạnh
+  text-align: center; // Canh giữa văn bản
+  margin-bottom: 8px; // Khoảng cách với nội dung bên dưới
+  transition: transform 0.3s ease-in-out, color 0.3s ease-in-out; // Hiệu ứng mượt mà
+}
+.btn-info {
+  background-color: #007bff; // Màu xanh dương chính
+  color: #ffffff; // Chữ màu trắng
+  border: none;
+  padding: 10px 20px; // Kích thước nút thoải mái hơn
+  border-radius: 4px;
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; // Hiệu ứng chuyển động mượt mà
+
+  &:hover {
+    background-color: #0056b3; // Xanh dương đậm hơn khi hover
+    box-shadow: 0 4px 8px rgba(0, 91, 187, 0.4); // Hiệu ứng bóng nổi bật khi hover
+  }
+}
+
+.btn-success {
+  background-color: #28a745; // Màu xanh lá chính
+  color: #ffffff; // Chữ màu trắng
+  border: none;
+  padding: 10px 20px; // Kích thước nút thoải mái hơn
+  border-radius: 4px;
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #1e7e34; // Xanh lá đậm hơn khi hover
+    box-shadow: 0 4px 8px rgba(30, 126, 52, 0.4); // Hiệu ứng bóng nổi bật khi hover
+  }
+}
+
+.card-body h5[cCardTitle] {
+  font-size: 1.25rem; // Kích thước chữ lớn hơn để dễ nhìn
+  font-weight: bold; // Làm chữ đậm để nhấn mạnh
+  text-align: center; // Canh giữa để đẹp mắt hơn
+  transition: transform 0.3s ease-in-out, color 0.3s ease-in-out; // Hiệu ứng mượt mà
+
+  &.active-title {
+    color: #28a745; // Màu xanh lá nổi bật cho trạng thái "Đang hoạt động"
+    text-shadow: 1px 1px 4px rgba(40, 167, 69, 0.6); // Hiệu ứng bóng chữ
+  }
+
+  &.inactive-title {
+    color: #dc3545; // Màu đỏ bắt mắt cho trạng thái "Đang trống"
+    text-shadow: 1px 1px 4px rgba(220, 53, 69, 0.6); // Hiệu ứng bóng chữ
+  }
+
+  &:hover {
+    transform: scale(1.1); // Phóng to nhẹ khi hover vào chữ
+    color: #17a2b8; // Thay đổi màu khi hover để tăng sự thu hút
+  }
+}
+
+.table-number {
+  position: absolute; // Đặt số bàn chồng lên hình ảnh
+  top: 12px; // Cách cạnh trên một khoảng
+  left: 12px; // Cách cạnh trái một khoảng
+  background-color: rgba(0, 0, 0, 0.7); // Nền đen mờ để nổi bật số
+  color: #ffffff; // Màu trắng để tương phản với nền
+  font-size: 2.5rem; // Tăng kích thước chữ để tạo sự chú ý
+  font-weight: bold; // Làm chữ đậm
+  padding: 8px 16px; // Tăng kích thước padding để trông cân đối hơn
+  border-radius: 8px; // Bo góc mềm mại
+  text-align: center; // Căn giữa nội dung số
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); // Hiệu ứng bóng nổi bật
+  z-index: 1; // Hiển thị phía trên hình ảnh
+  border: 2px solid #ffffff; // Viền trắng để làm nổi hơn nữa
+}
+
+.select-wrapper {
+  display: flex; // Kích hoạt Flexbox
+  justify-content: flex-end; // Căn sang phải
+  align-items: flex-start; // Căn lên trên
+  margin-bottom: 100px; // Khoảng cách bên dưới để tách biệt với các thành phần khác
+}
+
+select[cSelect] {
+  width: 220px; // Chiếm toàn bộ chiều rộng
+  padding: 12px; // Khoảng cách nội dung bên trong
+  font-size: 1rem; // Kích thước chữ dễ nhìn
+  border: 2px solid #007bff; // Viền xanh dương mặc định
+  border-radius: 8px; // Bo góc mềm mại
+  color: #495057; // Màu chữ xám đậm
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); // Bóng nhẹ ban đầu
+  transition: all 0.3s ease-in-out; // Hiệu ứng mượt mà cho tất cả trạng thái
+
+  &:hover {
+    cursor: pointer; // Thêm con trỏ để chỉ ra khả năng tương tác
+  }
+}
+
+.full-width {
+  width: 100%; // Đảm bảo chiếm toàn bộ chiều rộng
+  margin-bottom: 16px; // Tạo khoảng cách bên dưới (nếu cần)
+  display: flex; // Kích hoạt Flexbox nếu bạn cần căn giữa nội dung
+  justify-content: flex-end; // Đẩy nội dung (ô select) sang phải
+  align-items: center; // Căn giữa theo chiều dọc (nếu cần)
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.filter-wrapper {
+  display: flex; // Kích hoạt Flexbox
+  align-items: center; // Căn giữa theo chiều dọc
+  justify-content: end;
+  gap: 8px; // Khoảng cách giữa chữ "Lọc:" và ô select
+  margin-bottom: 16px; // Khoảng cách với các thành phần bên dưới
+}
+
+.filter-label {
+  font-size: 1rem; // Kích thước chữ
+  font-weight: bold; // Làm chữ đậm để dễ nhìn
+  color: #495057; // Màu chữ
+  margin: 0; // Loại bỏ margin mặc định
+}

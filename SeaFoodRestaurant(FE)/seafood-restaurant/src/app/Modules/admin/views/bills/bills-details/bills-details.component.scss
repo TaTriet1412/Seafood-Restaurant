@@ -1,0 +1,31 @@
+// You can reuse or add styles here if needed
+.payment-card {
+  // Example: Add specific styles for the payment card
+  .payment-info {
+    font-size: 1.1rem; // Make total price slightly larger
+  }
+  .payment-amount {
+    color: var(--cui-primary); // Use CoreUI primary color
+  }
+}
+
+// Style for the VNPay logo if you use it
+.payment_logo {
+  display: inline-block;
+  margin-right: 8px;
+  vertical-align: middle;
+  width: 24px; // Adjust size as needed
+  height: auto;
+
+  .img_logo {
+    max-width: 100%;
+    max-height: 20px; // Ensure it fits button height
+    vertical-align: middle;
+  }
+}
+
+// Ensure icons align nicely in buttons/text
+i.fa-solid {
+  vertical-align: middle; // Better vertical alignment
+}
+

@@ -12,7 +12,7 @@ const routes: Routes = [
   {
     path: 'admin',
     loadChildren: () => import('./Modules/admin/admin.module').then(m => m.AdminModule),
-    canActivate: [AuthAdminGuard]
+    // canActivate: [AuthAdminGuard]
   },
   { path: 'staff', 
     loadChildren: () => import('./Modules/staff/staff.module').then(m => m.StaffModule), 
@@ -27,9 +27,9 @@ const routes: Routes = [
     loadChildren: () => import('./Modules/test-user/test-user.module').then(m => m.TestUserModule), 
   },
   //Khi trang rỗng (ban đầu) thì trang trả về path user 
-  { path: '', redirectTo: 'chef', pathMatch: 'full' },
+  { path: '', redirectTo: 'admin', pathMatch: 'full' },
   //Tất cả đường dẫn không tồn tại thì trả về path user
-  { path: '**', redirectTo: 'chef' },
+  { path: '**', redirectTo: 'admin' },
 ];
 
 @NgModule({
