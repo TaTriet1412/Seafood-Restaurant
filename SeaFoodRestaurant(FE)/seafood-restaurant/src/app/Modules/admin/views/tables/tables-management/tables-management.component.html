@@ -16,28 +16,28 @@
           </div>
         </c-row>
         <c-row [gutter]="4" class="w-100 mb-3" [md]="3" [xs]="1">
-          <c-col *ngFor="let card of cards">
-            <c-card [ngClass]="{ 'active-card': card.active, 'inactive-card': !card.active }">
-              <div class="table-number">{{ card.number }}</div>
+          <c-col *ngFor="let table of tables">
+            <c-card [ngClass]="{ 'active-card': table.active, 'inactive-card': !table.active }">
+              <div class="table-number">{{ table.number }}</div>
               <img 
                 cCardImg="top" 
                 src="/assets/images/table/default-table.jpg"
-                [ngClass]="{ 'blur-image': !card.active }" 
+                [ngClass]="{ 'blur-image': !table.active }" 
               >
               <c-card-body>
-                <h5 cCardTitle [ngClass]="{ 'active-title': card.active, 'inactive-title': !card.active }">
-                  {{ card.active ? 'Đang hoạt động' : 'Đang trống' }}
+                <h5 cCardTitle [ngClass]="{ 'active-title': table.active, 'inactive-title': !table.active }">
+                  {{ table.active ? 'Đang hoạt động' : 'Đang trống' }}
                 </h5>
-                <p cCardText *ngIf="card.active">
+                <p cCardText *ngIf="table.active">
                   5 món chưa hoàn thành
                 </p>
               </c-card-body>
               <c-card-footer>
                 <small class="text-medium-emphasis">
-                  <button *ngIf="card.active" class="btn btn-info">
+                  <button *ngIf="table.active" (click)="goToTableOrder(table.number.toString())" class="btn btn-info">
                     Chi tiết <i class="fas fa-search"></i>
                   </button>
-                  <button *ngIf="!card.active" class="btn btn-success">
+                  <button *ngIf="!table.active" class="btn btn-success">
                     Mở bàn <i class="fas fa-plus"></i>
                   </button>
                 </small>

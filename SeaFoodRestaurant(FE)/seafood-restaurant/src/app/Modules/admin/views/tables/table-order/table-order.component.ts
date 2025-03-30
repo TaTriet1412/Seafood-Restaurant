@@ -38,6 +38,8 @@ import {
 } from '@coreui/angular-pro';
 import { NumberFormatService } from '../../../../../core/services/numberFormat.service';
 import { SnackBarService } from '../../../../../core/services/snack-bar.service';
+import { NavAdminService } from '../../../../../core/services/nav-routing/nav-admin.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface Dish {
   name: string;
@@ -85,6 +87,7 @@ interface MenuCategory {
   styleUrls: ['./table-order.component.scss'],
 })
 export class TableOrderComponent implements OnInit {
+  currTableId: number = -1;
   selectedCategory: string = '';
   selectedDish: string = '';
   quantity: number = 1;
@@ -165,12 +168,15 @@ export class TableOrderComponent implements OnInit {
   ];
 
   constructor(
+    private url: ActivatedRoute,
+    private navAdminService: NavAdminService,
     private numberFormatService: NumberFormatService,
     private cdf: ChangeDetectorRef,
     private snackbarService: SnackBarService,
   ) {}
 
   ngOnInit(): void {
+    this.currTableId = Number(this.url.snapshot.paramMap.get('id'));
     this.loadDataOrder()
     this.nextId = this.ordersData.length + 1;
     this.loadedData = true;
@@ -411,5 +417,9 @@ export class TableOrderComponent implements OnInit {
     }
     delete columnFilterValue.status;
     this.columnFilterValue = { ...columnFilterValue };
+  }
+
+  goToTableBill() {
+    this.navAdminService.goToTableBill(this.currTableId.toString())
   }
 } 

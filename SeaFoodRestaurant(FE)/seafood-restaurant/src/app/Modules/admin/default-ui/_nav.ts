@@ -1,4 +1,5 @@
 import { INavData } from "@coreui/angular";
+import { ROUTES } from "../../../core/constants/routes.constant.";
 
 const BASE_PATH = '/admin';
 
@@ -17,12 +18,12 @@ export const navItems: INavData[] = [
   },
   {
     name: "Danh sách bàn ăn",
-    url: prefixUrl('/tables'),
+    url: ROUTES.ADMIN.children.TABLE.fullPath,
     iconComponent: {name: 'cil-fire'}
   },
   {
     name: "Danh sách món ăn",
-    url: prefixUrl('/menu'),
+    url: ROUTES.ADMIN.children.MENU.fullPath,
     iconComponent: {name: 'cil-fastfood'}
   },
   {
@@ -31,17 +32,17 @@ export const navItems: INavData[] = [
   },
   {
     name: 'Phiếu tính tiền',
-    url: prefixUrl('/bills'),
+    url: ROUTES.ADMIN.children.BILL.fullPath,
     iconComponent: {name: 'cil-library'},
     children: [
       {
         name: 'Theo ca trực',
-        url: prefixUrl('/bills/bills-shifts'),
+        url: ROUTES.ADMIN.children.BILL.children.SHIFT.fullPath,
         icon: 'nav-icon-bullet'
       },
       {
         name: 'Theo năm/ tháng/ ngày',
-        url: prefixUrl('/bills/bills-date'),
+        url: ROUTES.ADMIN.children.BILL.children.DATE.fullPath,
         icon: 'nav-icon-bullet'
       }
     ]

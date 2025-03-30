@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ROUTES } from '../../../../core/constants/routes.constant.';
 
 export const routes: Routes = [
   {
@@ -9,28 +10,28 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'bills-details',
+        redirectTo: ROUTES.ADMIN.children.BILL.children.SHIFT.path,
         pathMatch: 'full'
       },
       {
-        path: 'bills-shifts',
+        path: ROUTES.ADMIN.children.BILL.children.SHIFT.path,
         loadComponent: () => import('./bills-shifts/bills-shifts.component').then(m => m.BillsShiftsComponent),
         data: {
-          title: 'Bills-Shifts'
+          title: 'Shift'
         }
       },
       {
-        path: 'bills-date',
+        path: ROUTES.ADMIN.children.BILL.children.DATE.path,
         loadComponent: () => import('./bills-date/bills-date.component').then(m => m.BillsDateComponent),
         data: {
-          title: 'Bills-Date'
+          title: 'Date'
         }
       },
       {
-        path: 'bills-details',
+        path: ROUTES.ADMIN.children.BILL.children.DETAIL.path,
         loadComponent: () => import('./bills-details/bills-details.component').then(m => m.BillsDetailsComponent),
         data: {
-          title: 'Bills-Details'
+          title: 'Detail'
         }
       },
     ]

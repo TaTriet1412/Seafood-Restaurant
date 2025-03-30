@@ -51,9 +51,6 @@ interface BillDetailsInfo {
     CardHeaderComponent,
     CardBodyComponent,
     TableModule, // Includes cTable directive
-    InputGroupComponent,
-    InputGroupTextDirective,
-    FormControlDirective,
     FormsModule,
     ButtonDirective, // For cButton
     // NgIf, NgFor are already part of CommonModule

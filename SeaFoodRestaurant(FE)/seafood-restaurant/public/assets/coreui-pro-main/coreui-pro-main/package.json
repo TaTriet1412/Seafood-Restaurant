@@ -172,5 +172,8 @@
     "peerDependencies": {
       "@popperjs/core": "^2.11.8"
     }
+  },
+  "dependencies": {
+    "@coreui/coreui-pro": "file:"
   }
 }

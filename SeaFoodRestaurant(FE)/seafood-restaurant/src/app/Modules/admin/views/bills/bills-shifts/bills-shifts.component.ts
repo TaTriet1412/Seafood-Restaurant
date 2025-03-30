@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AlignDirective, ButtonDirective, CardModule, ColDirective, FormSelectDirective, RowComponent, TableActiveDirective, TableColorDirective } from '@coreui/angular';
 import { ColComponent, DatePickerModule, IColumn, IItem, SmartTableComponent, TemplateIdDirective } from '@coreui/angular-pro';
+import { NavAdminService } from '../../../../../core/services/nav-routing/nav-admin.service';
 
 @Component({
   selector: 'app-bills-shifts',
@@ -46,7 +47,10 @@ export class BillsShiftsComponent implements OnInit {
   selectedDate = true;
   selectedShift: string = '';
 
-  constructor(private datePipe: DatePipe) {}
+  constructor(
+    private datePipe: DatePipe,
+    private navAdminService: NavAdminService,
+  ) {}
 
   ngOnInit(): void {
     this.loadDataBills();
@@ -123,5 +127,9 @@ export class BillsShiftsComponent implements OnInit {
     this.billsData = filteredData;
     console.log('Dữ liệu cuối cùng gán cho bảng (billsData):', JSON.parse(JSON.stringify(this.billsData)));
     console.log('--- Kết thúc applyFilters ---');
+  }
+
+  goToBillDetail(billId: IItem) {
+    this.navAdminService.goToBillDetail(billId['id'].toString());
   }
 }

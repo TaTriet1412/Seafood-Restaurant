@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DefaultUiComponent } from './default-ui/default-ui.component';
+import { ROUTES } from '../../core/constants/routes.constant.';
+
+const default_url: string =  ROUTES.ADMIN.children.TABLE.path;
 
 const routes: Routes = [
   {
@@ -11,18 +14,18 @@ const routes: Routes = [
     },
     children: [
       {
-        path: 'tables',
+        path: ROUTES.ADMIN.children.TABLE.path,
         loadChildren: () => import('./views/tables/routes').then(m => m.routes)
       },
       {
-        path: 'menu',
+        path: ROUTES.ADMIN.children.MENU.path,
         loadChildren: () => import('./views/menu/routes').then(m => m.routes)
       },
       {
-        path: 'bills',
+        path: ROUTES.ADMIN.children.BILL.path,
         loadChildren: () => import('./views/bills/routes').then(m => m.routes)
       },
-      { path: "", redirectTo: 'bills', pathMatch: 'full' },
+      { path: "", redirectTo:  default_url, pathMatch: 'full' },
 
 
     ]

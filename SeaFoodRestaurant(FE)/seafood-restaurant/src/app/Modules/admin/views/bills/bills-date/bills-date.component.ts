@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, LOCALE_ID, OnIni
 import { FormsModule } from '@angular/forms'; // Import FormsModule for [(ngModel)]
 import { CardModule, RowComponent, ButtonModule, FormModule, ColDirective, TableActiveDirective, TableColorDirective, AlignDirective, CardComponent, CardBodyComponent, CardHeaderComponent, ButtonDirective } from '@coreui/angular'; // Added ButtonModule, FormModule for potential button/label usage
 import { ColComponent, DatePickerModule, IColumn, IItem, SmartPaginationModule, TemplateIdDirective, SmartTableModule } from '@coreui/angular-pro'; // Ensure CoreUI Pro is correctly imported
+import { NavAdminService } from '../../../../../core/services/nav-routing/nav-admin.service';
 
 // Register the Vietnamese locale data
 
@@ -93,6 +94,7 @@ export class BillsDateComponent implements OnInit {
 
 
   constructor(
+    private navAdminService: NavAdminService,
     private cdf: ChangeDetectorRef,
     private datePipe: DatePipe // Inject DatePipe
   ) { }
@@ -286,5 +288,9 @@ export class BillsDateComponent implements OnInit {
       console.log("View details for:", item);
       // Implement navigation or modal display logic here
       alert(`Xem chi tiết cho Hóa đơn ID: ${item['id']}\nBàn: ${item['table_name']}\nTổng tiền: ${item['total']}\nNgày: ${this.datePipe.transform(item['created_at'], 'dd/MM/yyyy HH:mm')}`);
+  }
+
+  goToBillDetail(billId: IItem) {
+    this.navAdminService.goToBillDetail(billId['id'].toString());
   }
 }
