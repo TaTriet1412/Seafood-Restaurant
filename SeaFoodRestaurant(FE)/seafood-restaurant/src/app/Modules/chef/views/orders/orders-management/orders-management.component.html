@@ -69,6 +69,7 @@
                 size="sm"
                 variant="outline"
                 class="w-100"
+                (click)="handleClick(item)"
               >
                   {{item['status'] == 'Pending' ? 'Chi tiết' : 'Bắt đầu nấu' }}
               </button>

@@ -33,6 +33,7 @@ import {
 } from '@coreui/angular-pro';
 import { NumberFormatService } from '../../../../../core/services/numberFormat.service';
 import { SnackBarService } from '../../../../../core/services/snack-bar.service';
+import { NavChefService } from '../../../../../core/services/nav-routing/nav-chef.service';
 
 
 
@@ -48,21 +49,13 @@ import { SnackBarService } from '../../../../../core/services/snack-bar.service'
     CardHeaderComponent,
     SmartPaginationModule,
     ColComponent,
-    CardFooterComponent,
-    BadgeComponent,
     RowComponent,
-    FormSelectDirective,
-    FormFeedbackComponent,
     ButtonDirective,
-    FormControlDirective,
-    FormLabelDirective,
-    FormDirective,
     SmartTableModule,
     ColDirective,
     TableActiveDirective,
     TableColorDirective,
     TemplateIdDirective,
-    CollapseDirective,
     AlignDirective,
     MultiSelectModule,
   ],
@@ -109,6 +102,7 @@ export class OrdersManagementComponent implements OnInit {
   ];
 
   constructor(
+    private navChefService: NavChefService,
     private numberFormatService: NumberFormatService,
     private cdf: ChangeDetectorRef,
     private snackbarService: SnackBarService,
@@ -139,5 +133,13 @@ export class OrdersManagementComponent implements OnInit {
 
   }
 
- 
+  handleClick(item : IItem) {
+    if(item['status'] == 'Pending') {
+      this.goToOrderDetail(item['id'].toString())
+    }
+  }
+
+  goToOrderDetail(orderID: string) {
+    this.navChefService.goToOrderDetail(orderID)
+  }
 }

@@ -17,7 +17,7 @@ export const ROUTES = {
                     },
                     ORDER: {
                         path: ':id/table-order',
-                        fullPath: (id: string) => 
+                        fullPath: (id: string) =>
                             `/admin/tables/${id}/table-order`,
                     },
                     BILL: {
@@ -71,7 +71,7 @@ export const ROUTES = {
                     },
                     ORDER: {
                         path: ':id/table-order',
-                        fullPath: (id: string) => 
+                        fullPath: (id: string) =>
                             `/staff/tables/${id}/table-order`,
                     },
                     BILL: {
@@ -94,6 +94,27 @@ export const ROUTES = {
         }
     },
     CHEF: {
-
+        path: 'chef',
+        fullPath: '/chef',
+        children: {
+            DISH: {
+                path: 'dishes',
+                fullPath: '/chef/dishes'
+            },
+            ORDER: {
+                path: 'orders',
+                fullPath: '/chef/orders',
+                children: {
+                    LIST: {
+                        path: 'list',
+                        fullPath: 'chef/orders/list'
+                    },
+                    DETAIL: {
+                        path: ':id',
+                        fullPath: (id: string) => `chef/orders/${id}`
+                    }
+                }
+            }
+        }
     }
 }

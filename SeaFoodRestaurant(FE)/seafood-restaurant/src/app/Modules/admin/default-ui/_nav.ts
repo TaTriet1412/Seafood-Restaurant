@@ -1,5 +1,5 @@
 import { INavData } from "@coreui/angular";
-import { ROUTES } from "../../../core/constants/routes.constant.";
+import { ROUTES } from "../../../core/constants/routes.constant";
 
 const BASE_PATH = '/admin';
 

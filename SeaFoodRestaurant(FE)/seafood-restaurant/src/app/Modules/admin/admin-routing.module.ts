@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DefaultUiComponent } from './default-ui/default-ui.component';
-import { ROUTES } from '../../core/constants/routes.constant.';
+import { ROUTES } from '../../core/constants/routes.constant';
 
 const default_url: string =  ROUTES.ADMIN.children.TABLE.path;
 

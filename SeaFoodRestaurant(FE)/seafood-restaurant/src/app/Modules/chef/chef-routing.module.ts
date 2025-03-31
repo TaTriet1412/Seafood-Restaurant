@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DefaultUiComponent } from './default-ui/default-ui.component';
+import { ROUTES } from '../../core/constants/routes.constant';
+
+const default_url = ROUTES.CHEF.children.DISH.path;
 
 const routes: Routes = [
   {
@@ -11,14 +14,14 @@ const routes: Routes = [
     },
     children: [
       {
-        path: 'dishes',
+        path: ROUTES.CHEF.children.DISH.path,
         loadChildren: () => import('./views/dishes/routes').then(m => m.routes)
       },
       {
-        path: 'orders',
+        path: ROUTES.CHEF.children.ORDER.path,
         loadChildren: () => import('./views/orders/routes').then(m => m.routes)
       },
-      { path: "", redirectTo: 'dishes', pathMatch: 'full' },
+      { path: "", redirectTo: default_url, pathMatch: 'full' },
     ]
   }
 ]

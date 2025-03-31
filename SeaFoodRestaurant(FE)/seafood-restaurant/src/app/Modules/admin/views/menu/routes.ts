@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { ROUTES } from '../../../../core/constants/routes.constant.';
+import { ROUTES } from '../../../../core/constants/routes.constant';
 
 export const routes: Routes = [
     {
