@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { ROUTES } from '../../../../core/constants/routes.constant.';
 
 export const routes: Routes = [
     {
@@ -9,16 +10,16 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'menu-items',
+                redirectTo: ROUTES.STAFF.children.MENU.children.LIST.path,
                 pathMatch: 'full'
             },
             {
-                path: 'menu-items',
+                path: ROUTES.STAFF.children.MENU.children.LIST.path,
                 loadComponent: () => 
                     import('./menu-items/menu-items.component')
                         .then(m => m.MenuItemsComponent),
                 data: {
-                    title: 'Items'
+                    title: 'List'
                 }
             },
         ]

@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { ROUTES } from '../../../../core/constants/routes.constant.';
+
 
 export const routes: Routes = [
     {
@@ -9,36 +11,36 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                redirectTo: 'tables-management',
+                redirectTo: 'list',
                 pathMatch: 'full'
             },
             {
-                path: 'tables-management',
-                loadComponent: () => 
+                path: ROUTES.STAFF.children.TABLE.children.LIST.path,
+                loadComponent: () =>
                     import('./tables-management/tables-management.component')
                         .then(m => m.TablesManagementComponent),
                 data: {
-                    title: 'Tables-Management'
-                }
+                    title: 'List'
+                },
             },
             {
-                path: 'table-order',
-                loadComponent: () => 
+                path: ROUTES.STAFF.children.TABLE.children.ORDER.path,
+                loadComponent: () =>
                     import('./table-order/table-order.component')
                         .then(m => m.TableOrderComponent),
                 data: {
                     title: 'Table-Order'
-                }
+                },
             },
             {
-                path: 'table-bill',
-                loadComponent: () => 
+                path: ROUTES.STAFF.children.TABLE.children.BILL.path,
+                loadComponent: () =>
                     import('./table-bill/table-bill.component')
                         .then(m => m.TableBillComponent),
                 data: {
-                    title: 'Bill'
-                }
-            },
-        ]
+                    title: 'Table-Bill'
+                },
+            }
+        ],
     }
 ];

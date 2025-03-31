@@ -1,7 +1,7 @@
 // * Mảng order và menu chưa được chỉnh theo BE
 // ! nextID là ví dụ có vị trí order cần được điều chỉnh
 
- 
+
 
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -38,6 +38,8 @@ import {
 } from '@coreui/angular-pro';
 import { NumberFormatService } from '../../../../../core/services/numberFormat.service';
 import { SnackBarService } from '../../../../../core/services/snack-bar.service';
+import { ActivatedRoute } from '@angular/router';
+import { NavStaffService } from '../../../../../core/services/nav-routing/nav-staff.service';
 
 interface Dish {
   name: string;
@@ -85,6 +87,7 @@ interface MenuCategory {
   styleUrls: ['./table-order.component.scss'],
 })
 export class TableOrderComponent implements OnInit {
+  currTableId: number = -1;
   selectedCategory: string = '';
   selectedDish: string = '';
   quantity: number = 1;
@@ -139,7 +142,7 @@ export class TableOrderComponent implements OnInit {
       key: 'name',
       label: 'Tên món',
       _style: { width: '20%' },
-      _props: {  class: 'fw-bold' }
+      _props: { class: 'fw-bold' }
     },
     {
       key: 'quantity',
@@ -153,7 +156,8 @@ export class TableOrderComponent implements OnInit {
       sorter: false,
       _style: { width: '15%' },
     },
-    { key: 'status',
+    {
+      key: 'status',
       _style: { width: '25%' },
       label: 'Trạng thái'
     },
@@ -167,21 +171,24 @@ export class TableOrderComponent implements OnInit {
   ];
 
   constructor(
+    private url: ActivatedRoute,
+    private navStaffService: NavStaffService,
     private numberFormatService: NumberFormatService,
     private cdf: ChangeDetectorRef,
     private snackbarService: SnackBarService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.currTableId = Number(this.url.snapshot.paramMap.get('id'));
     this.loadDataOrder()
     this.nextId = this.ordersData.length + 1;
     this.loadedData = true;
 
     // Dùng mảng  này nếu chỉ dùng phần tử bên trong
     // this.statusList = [...new Set(this.ordersData.map((item) => item['status']))];
-    
+
     // Dùng mảng này nếu cố định
-    this.statusList = ['Active','Inactive','Pending','Banned','']
+    this.statusList = ['Active', 'Inactive', 'Pending', 'Banned', '']
     this.cdf.detectChanges();
   }
 
@@ -215,7 +222,7 @@ export class TableOrderComponent implements OnInit {
         _props: { color: 'success', align: 'middle' }
       }
     ];
-    
+
   }
 
   get filteredDishes() {
@@ -230,7 +237,7 @@ export class TableOrderComponent implements OnInit {
   onSubmit(form: NgForm) {
     this.validated = true;
     this.submitted = true;
-    
+
     if (form.valid) {
       // Bật nút để thông báo cho bếp
       this.isNotifyKitchen = false;
@@ -241,7 +248,7 @@ export class TableOrderComponent implements OnInit {
         // const existingOrderIndex = this.ordersData.findIndex(
         //   order => order['name'] === dish.name
         // );
-  
+
         // if (existingOrderIndex !== -1) {
         //   // Nếu món đã tồn tại, cập nhật số lượng và trạng thái
         //   const updatedOrders = [...this.ordersData];
@@ -255,23 +262,23 @@ export class TableOrderComponent implements OnInit {
         //     status: 'Inactive',
         //     _props: { color: 'secondary', align: 'middle' }
         //   };
-          
+
         //   this.ordersData = updatedOrders;
         // } else {
         // }
-          // Nếu món chưa tồn tại, thêm mới
-          const newOrder: IItem = {
-            id: this.nextId++,
-            name: dish.name,
-            quantity: this.quantity,
-            price: dish.price,
-            total: this.numberFormatService.formatNumber(dish.price * this.quantity),
-            status: 'Inactive',
-            _props: { color: 'secondary', align: 'middle' }
-          };
-          
-          this.ordersData = [...this.ordersData, newOrder];
-        
+        // Nếu món chưa tồn tại, thêm mới
+        const newOrder: IItem = {
+          id: this.nextId++,
+          name: dish.name,
+          quantity: this.quantity,
+          price: dish.price,
+          total: this.numberFormatService.formatNumber(dish.price * this.quantity),
+          status: 'Inactive',
+          _props: { color: 'secondary', align: 'middle' }
+        };
+
+        this.ordersData = [...this.ordersData, newOrder];
+
         this.onReset();
       }
     }
@@ -280,11 +287,11 @@ export class TableOrderComponent implements OnInit {
   // Sự kiện thay đổi số lượng món
   changeQuantitySubmit(form: NgForm, orderId: number) {
     this.validatedChange = true;
-    let currOrder:any = this.ordersData.find(order => order['id'] == orderId)
+    let currOrder: any = this.ordersData.find(order => order['id'] == orderId)
 
     //Gọi server thay đổi món
 
-    if(currOrder['quantity'] != this.quantityToChange) {
+    if (currOrder['quantity'] != this.quantityToChange) {
       this.isNotifyKitchen = false;
     }
     // TODO: Cập nhật danh sách ordersData
@@ -295,7 +302,7 @@ export class TableOrderComponent implements OnInit {
 
   deleteOrder(orderId: number) {
     let currOrder: any = this.ordersData.find(order => order['id'] === orderId);
-    
+
     if (currOrder && currOrder['status'] === 'Inactive') {
       this.ordersData = this.ordersData.filter(order => order['id'] !== orderId);
       return;
@@ -374,7 +381,7 @@ export class TableOrderComponent implements OnInit {
     // Giả sử đã gửi thông báo
     this.ordersData = this.ordersData.map(order => {
       return {
-        ...order, 
+        ...order,
         status: order['status'] === 'Inactive' ? '' : order['status']
       };
     });
@@ -384,7 +391,7 @@ export class TableOrderComponent implements OnInit {
 
   // Lấy tổng giá tiền 
   getTotalPrice(): string {
-    const totalPrice = this.ordersData.reduce((total, order) => total + order['price']*order['quantity'],0);  
+    const totalPrice = this.ordersData.reduce((total, order) => total + order['price'] * order['quantity'], 0);
     return this.numberFormatService.formatNumber(totalPrice)
   }
 
@@ -405,7 +412,7 @@ export class TableOrderComponent implements OnInit {
   handleValueChange($event: any) {
     const columnFilterValue = { ...this.columnFilterValue };
     if ($event?.length) {
-      const selected:any = [...$event];
+      const selected: any = [...$event];
       this.selectedStatus = selected;
       const filterFunction = (item: any) => selected.includes(item);
       this.columnFilterValue = { ...columnFilterValue, status: filterFunction };
@@ -413,5 +420,9 @@ export class TableOrderComponent implements OnInit {
     }
     delete columnFilterValue.status;
     this.columnFilterValue = { ...columnFilterValue };
+  }
+
+  goToTableBill() {
+    this.navStaffService.goToTableBill(this.currTableId.toString())
   }
 } 

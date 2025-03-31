@@ -58,7 +58,40 @@ export const ROUTES = {
         }
     },
     STAFF: {
-
+        path: 'staff',
+        fullPath: '/staff',
+        children: {
+            TABLE: {
+                path: 'tables',
+                fullPath: '/staff/tables',
+                children: {
+                    LIST: {
+                        path: 'list',
+                        fullPath: 'staff/tables/list'
+                    },
+                    ORDER: {
+                        path: ':id/table-order',
+                        fullPath: (id: string) => 
+                            `/staff/tables/${id}/table-order`,
+                    },
+                    BILL: {
+                        path: ':id/table-bill',
+                        fullPath: (id: string) =>
+                            `/staff/tables/${id}/table-bill`
+                    }
+                }
+            },
+            MENU: {
+                path: 'menu',
+                fullPath: '/staff/menu',
+                children: {
+                    LIST: {
+                        path: 'list',
+                        fullPath: 'staff/menu/list'
+                    }
+                }
+            },
+        }
     },
     CHEF: {
 

@@ -27,9 +27,9 @@ const routes: Routes = [
     loadChildren: () => import('./Modules/test-user/test-user.module').then(m => m.TestUserModule), 
   },
   //Khi trang rỗng (ban đầu) thì trang trả về path user 
-  { path: '', redirectTo: 'admin', pathMatch: 'full' },
+  { path: '', redirectTo: 'staff', pathMatch: 'full' },
   //Tất cả đường dẫn không tồn tại thì trả về path user
-  { path: '**', redirectTo: 'admin' },
+  { path: '**', redirectTo: 'staff' },
 ];
 
 @NgModule({
