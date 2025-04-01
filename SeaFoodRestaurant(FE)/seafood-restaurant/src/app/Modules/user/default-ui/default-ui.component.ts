@@ -11,12 +11,12 @@ export class DefaultUiComponent implements OnInit {
   constructor(private spinner: NgxSpinnerService) {}
 
   ngOnInit() {
-    /** spinner starts on init */
-    this.spinner.show();
+    // /** spinner starts on init */
+    // this.spinner.show();
 
-    setTimeout(() => {
-      /** spinner ends after 5 seconds */
-      this.spinner.hide();
-    }, 2000);
+    // setTimeout(() => {
+    //   /** spinner ends after 5 seconds */
+    //   this.spinner.hide();
+    // }, 2000);
   }
 }

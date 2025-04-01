@@ -1,6 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import {
   AvatarComponent,
@@ -23,12 +23,14 @@ import {
 } from '@coreui/angular';
 
 import { IconDirective } from '@coreui/icons-angular';
+import { AuthService } from '../../../../core/services/auth.service';
+import { SnackBarService } from '../../../../core/services/snack-bar.service';
 
 @Component({
-    selector: 'app-default-header',
-    templateUrl: './default-header.component.html',
-    standalone: true,
-  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavLinkDirective, RouterLink, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective]
+  selector: 'app-default-header',
+  templateUrl: './default-header.component.html',
+  standalone: true,
+  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavLinkDirective, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective]
 })
 export class DefaultHeaderComponent extends HeaderComponent {
 
@@ -46,7 +48,11 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor() {
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private snackbarService: SnackBarService,
+  ) {
     super();
   }
 
@@ -127,4 +133,29 @@ export class DefaultHeaderComponent extends HeaderComponent {
     { id: 4, title: 'Angular Version', value: 100, color: 'success' }
   ];
 
+  logout() {
+    const userEmail = this.authService.getEmail(); // Assuming getEmail() exists
+
+    if (!userEmail) {
+      console.error("Logout error: User email not found.");
+      this.snackbarService.notifyError("Không thể lấy thông tin người dùng để đăng xuất.");
+      // Force clear local state and redirect if email is missing
+      this.authService.resetDefaultUser();
+      this.router.navigate(['']);
+      return;
+    }
+
+    this.authService.logout(userEmail)
+      .subscribe({
+        next: (res) => {
+          console.log('Logout successful', res);
+          this.router.navigate(['']);
+        },
+        error: (err: any) => { //
+          const errorMessage = err?.error?.message || 'Đăng xuất không thành công. Vui lòng thử lại.';
+          this.snackbarService.notifyError(errorMessage);
+        },
+        complete: () => { console.log('Logout observable completed.'); }
+      });
+  }
 }

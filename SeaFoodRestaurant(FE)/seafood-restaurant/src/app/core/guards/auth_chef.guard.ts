@@ -10,7 +10,7 @@ export class AuthChefGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    if (this.authService.getAuthStatus() && this.authService.getAdminStatus()) {
+    if (this.authService.getAuthStatus() && this.authService.getChefStatus()) {
       sessionStorage.setItem('currentUrl', location.hash);
       return true;
     } else {

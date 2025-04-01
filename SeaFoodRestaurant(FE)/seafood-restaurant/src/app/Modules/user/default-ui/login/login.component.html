@@ -1,15 +1,19 @@
+<!-- login.component.html -->
 <h3><b>Đăng nhập hệ thống</b></h3>
-<p class="mb-4">
-  Vui lòng đăng nhập để truy cập hệ thống quản lý nhà hàng.
-</p>
-<form action="#" method="post">
+<p class="mb-4">Vui lòng đăng nhập để truy cập hệ thống quản lý nhà hàng.</p>
+
+<!-- Use ngSubmit to call the component's method -->
+<form (ngSubmit)="onSubmit()">
   <div class="form-group first">
     <label for="username">Tên đăng nhập</label>
     <input
       type="text"
       class="form-control"
-      placeholder="Nhập email hoặc tên đăng nhập"
+      placeholder="Nhập email hoặc số điện thoại"
       id="username"
+      name="username"
+      [(ngModel)]="loginData.userId"
+      required
     />
   </div>
   <div class="form-group last mb-3">
@@ -19,19 +23,37 @@
       class="form-control"
       placeholder="Nhập mật khẩu"
       id="password"
+      name="password"
+      [(ngModel)]="loginData.password"
+      required
     />
+  </div>
+
+  <!-- Error Message Display -->
+  <div *ngIf="errorMessage" class="alert alert-danger mt-2 mb-3">
+    {{ errorMessage }}
   </div>
 
   <div class="d-flex mb-5 align-items-center">
     <label class="control control--checkbox mb-0"
       ><span class="caption">Ghi nhớ đăng nhập</span>
       <input type="checkbox" checked="checked" />
+      <!-- Consider binding this with ngModel if needed -->
       <div class="control__indicator"></div>
     </label>
-    <span class="ml-auto"
+    <!-- <span class="ml-auto"
       ><a href="#" class="forgot-pass">Quên mật khẩu?</a></span
-    >
+    > -->
   </div>
 
-  <input type="submit" value="Đăng nhập" class="btn btn-block btn-primary" />
+  <!-- Update submit button -->
+  <button
+    type="submit"
+    class="btn btn-block btn-primary"
+    [disabled]="isLoading"
+  >
+    <!-- Disable button when loading -->
+    {{ isLoading ? "Đang xử lý..." : "Đăng nhập" }}
+    <!-- Change text when loading -->
+  </button>
 </form>

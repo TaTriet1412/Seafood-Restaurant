@@ -5,6 +5,7 @@ import { UserRoutingModule } from './user-routing.module';
 import { LoginComponent } from './default-ui/login/login.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { DefaultUiComponent } from './default-ui/default-ui.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { DefaultUiComponent } from './default-ui/default-ui.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     UserRoutingModule,
     NgxSpinnerModule,
 

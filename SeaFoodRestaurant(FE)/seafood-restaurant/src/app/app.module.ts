@@ -1,5 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -8,6 +8,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 import { SidebarModule } from '@coreui/angular';
 import { IconModule, IconSetModule, IconSetService } from '@coreui/icons-angular';
 import * as allIcons from '@coreui/icons'; // Import all icons
+import { provideHttpClient, withFetch } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,11 +27,12 @@ import * as allIcons from '@coreui/icons'; // Import all icons
 
   ],
   providers: [
-    IconSetService
+    IconSetService,
+    provideClientHydration(),
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-
 })
 export class AppModule { 
   constructor(private iconSet: IconSetService) {

@@ -3,55 +3,65 @@ export const ROUTES = {
         path: '',
         fullPath: ''
     },
+    USER: {
+        path: 'user',
+        fullPath: '/user',
+        childer: {
+            LOGIN: {
+                path: 'login',
+                fullPath: '/user/login'
+            }
+        }
+    },
     ADMIN: {
-        path: 'admin',
-        fullPath: '/admin',
+        path: 'manager',
+        fullPath: '/manager',
         children: {
             TABLE: {
                 path: 'tables',
-                fullPath: '/admin/tables',
+                fullPath: '/manager/tables',
                 children: {
                     LIST: {
                         path: 'list',
-                        fullPath: 'admin/tables/list'
+                        fullPath: 'manager/tables/list'
                     },
                     ORDER: {
                         path: ':id/table-order',
                         fullPath: (id: string) =>
-                            `/admin/tables/${id}/table-order`,
+                            `/manager/tables/${id}/table-order`,
                     },
                     BILL: {
                         path: ':id/table-bill',
                         fullPath: (id: string) =>
-                            `/admin/tables/${id}/table-bill`
+                            `/manager/tables/${id}/table-bill`
                     }
                 }
             },
             MENU: {
                 path: 'menu',
-                fullPath: '/admin/menu',
+                fullPath: '/manager/menu',
                 children: {
                     LIST: {
                         path: 'list',
-                        fullPath: 'admin/menu/list'
+                        fullPath: 'manager/menu/list'
                     }
                 }
             },
             BILL: {
                 path: 'bills',
-                fullPath: '/admin/bills',
+                fullPath: '/manager/bills',
                 children: {
                     SHIFT: {
                         path: 'shift',
-                        fullPath: '/admin/bills/shift'
+                        fullPath: '/manager/bills/shift'
                     },
                     DATE: {
                         path: 'date',
-                        fullPath: '/admin/bills/date'
+                        fullPath: '/manager/bills/date'
                     },
                     DETAIL: {
                         path: ':id',
-                        fullPath: (id: string) => `admin/bills/${id}`
+                        fullPath: (id: string) => `manager/bills/${id}`
                     }
                 }
             }
