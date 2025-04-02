@@ -31,6 +31,8 @@ public class SecurityConfig  {
                             .permitAll()
                         .requestMatchers("/dish/**")
                             .hasAnyRole("Manager","Staff")
+                        .requestMatchers("/images/**")
+                        .hasAnyRole("Manager", "Staff")
 
                         // Chỉ ADMIN có quyền quản lý user
                         .requestMatchers("/admin/**")
