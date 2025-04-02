@@ -29,8 +29,8 @@ public class SecurityConfig  {
                         // Allow access to /auth/register and /auth/login without JWT
                         .requestMatchers( "/auth/**")
                             .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/images/**")
-                            .permitAll()
+                        .requestMatchers("/dish/**")
+                            .hasAnyRole("Manager","Staff")
 
                         // Chỉ ADMIN có quyền quản lý user
                         .requestMatchers("/admin/**")

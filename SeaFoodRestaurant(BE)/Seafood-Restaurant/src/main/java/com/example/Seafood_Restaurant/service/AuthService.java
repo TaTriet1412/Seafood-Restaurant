@@ -3,13 +3,10 @@ package com.example.Seafood_Restaurant.service;
 import com.example.Seafood_Restaurant.entity.User;
 import com.example.Seafood_Restaurant.repository.UserRepository;
 import com.example.Seafood_Restaurant.security.JwtTokenProvider;
-import com.example.Seafood_Restaurant.utils.FieldUtils;
-import com.example.Seafood_Restaurant.utils.VariableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -32,7 +29,6 @@ public class AuthService {
         for(User user:userService.getUsers()){
             if((user.getEmail().equals(userId) || user.getPhone().equals(userId)) &&
                     passwordEncoder.matches(password,user.getPassword())){
-                user.setLast_login(LocalDateTime.now());
                 userRepository.save(user);
                 return user;
             }

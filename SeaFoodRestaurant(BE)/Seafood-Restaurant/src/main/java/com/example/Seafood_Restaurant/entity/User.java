@@ -43,8 +43,5 @@ public class User {
     private LocalDateTime created_at;
 
     @Column
-    private LocalDateTime last_login;
-
-    @Column
     private boolean is_active;
 }

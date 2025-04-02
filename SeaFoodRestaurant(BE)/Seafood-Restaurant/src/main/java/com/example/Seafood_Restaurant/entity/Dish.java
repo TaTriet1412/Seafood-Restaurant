@@ -16,22 +16,26 @@ public class Dish {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
-    Category category;
+    private Category category;
 
     @Column(nullable = false)
-    String name;
+    private String name;
 
     @Column(columnDefinition = "TEXT")
-    String description;
+    private String description;
 
     @Column(nullable = false, precision = 60, scale = 2)
-    BigDecimal price;
+    private Integer price;
+
+    @Column
+    private String image;
+
 
     @Column(nullable = false)
-    Boolean able = true;
+    private Boolean able = true;
 }
 
