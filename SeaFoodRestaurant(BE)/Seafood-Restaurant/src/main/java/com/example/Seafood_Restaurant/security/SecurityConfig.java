@@ -32,19 +32,11 @@ public class SecurityConfig  {
                         .requestMatchers("/dish/**")
                             .hasAnyRole("Manager","Staff")
                         .requestMatchers("/images/**")
-                        .hasAnyRole("Manager", "Staff")
+                            .hasAnyRole("Manager", "Staff")
 
                         // Chỉ ADMIN có quyền quản lý user
                         .requestMatchers("/admin/**")
                             .hasRole("ADMIN")
-
-                        // USER & ADMIN có thể tạo bài viết
-                        .requestMatchers(HttpMethod.POST, "/posts/**")
-                            .hasAnyRole("USER", "ADMIN")
-
-                        // GUEST có thể xem danh sách bài viết
-                        .requestMatchers(HttpMethod.GET, "/posts/**")
-                            .hasAnyRole("GUEST", "USER", "ADMIN")
 
                         // Secure the API endpoints that require JWT
                         .requestMatchers("/api/**")

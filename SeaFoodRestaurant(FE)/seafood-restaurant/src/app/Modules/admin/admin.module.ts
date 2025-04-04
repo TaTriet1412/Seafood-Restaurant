@@ -12,7 +12,7 @@ import { provideClientHydration } from '@angular/platform-browser';
   ],
   imports: [
     CommonModule,
-    AdminRoutingModule
+    AdminRoutingModule,
   ],
   providers: [
     provideClientHydration(),

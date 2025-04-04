@@ -6,7 +6,7 @@ import { LoginResponse } from '../../share/dto/response/login-response';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthService implements OnDestroy{
+export class AuthService implements OnDestroy {
   private userRole: string = 'none';
   authStatusChanged: EventEmitter<string> = new EventEmitter();
 
@@ -22,12 +22,16 @@ export class AuthService implements OnDestroy{
     localStorage.setItem('auth_token', token);
   }
 
+  getToken(): string {
+    return localStorage.getItem('auth_token')!
+  }
+
   login(userId: string, password: string): Observable<any> {
     return this.http.post<any>(this.apiUrl + "/login", { userId, password }).pipe(
       tap((response: LoginResponse) => {
         if (response.token) {
           this.saveToken(response.token); // Save token after successful login
-          this.saveInfoUser(response.name,response.email)
+          this.saveInfoUser(response.name, response.email)
           this.loadRole(response.role)
           this.saveAuthStatus();
           this.authStatusChanged.emit(this.userRole);
@@ -72,11 +76,11 @@ export class AuthService implements OnDestroy{
     return this.userRole === 'Manager';
   }
 
-  getRole():string {
+  getRole(): string {
     return this.userRole;
   }
 
-  getEmail():string {
+  getEmail(): string {
     return localStorage.getItem('email')!;
   }
 
@@ -90,14 +94,14 @@ export class AuthService implements OnDestroy{
   }
 
   private loadAuthStatus() {
-    const savedUserRole = localStorage.getItem('userRole') as 'none' | 'staff' | 'admin'  | 'chef';
+    const savedUserRole = localStorage.getItem('userRole') as 'none' | 'staff' | 'admin' | 'chef';
     if (savedUserRole) {
       this.userRole = savedUserRole;
-      this.authStatusChanged.emit(this.userRole); 
+      this.authStatusChanged.emit(this.userRole);
     }
   }
 
   ngOnDestroy(): void {
-      localStorage.removeItem('userRole');
+    localStorage.removeItem('userRole');
   }
 }
