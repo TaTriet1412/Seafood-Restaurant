@@ -1,5 +1,6 @@
 package com.example.Seafood_Restaurant.exception;
 
+import com.example.Seafood_Restaurant.dto.request.ApiRespone;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +37,14 @@ public class RestExceptionHandler {
             IllegalArgumentException ex) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
+    // Những error tự định nghĩa
+    @ExceptionHandler(value = AppException.class)
+    protected ResponseEntity<Object> handlingAppException(AppException e) {
+        ApiError apiError = new ApiError(e.getErrorCode().getStatus());
+        apiError.setMessage(e.getErrorCode().getMessage());
         return buildResponseEntity(apiError);
     }
 }

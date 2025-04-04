@@ -32,6 +32,13 @@ public class SecurityConfig  {
                         .requestMatchers("/dish/**")
                             .hasAnyRole("Manager","Staff")
 
+                        .requestMatchers("/order-detail/check/**")
+                            .hasAnyRole("Chef", "Staff")
+                        .requestMatchers("/order-detail/finished/**", "/order-detail/cooking/**", "/order-detail/ordered/**")
+                            .hasRole("Chef")
+                        .requestMatchers("/order-detail/cancelled/**")
+                            .hasRole("Staff")
+
                         // Chỉ ADMIN có quyền quản lý user
                         .requestMatchers("/admin/**")
                             .hasRole("ADMIN")
