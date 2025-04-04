@@ -26,6 +26,21 @@
   display: inline-block;
 }
 
-.h-180 {
-  height: 256px;
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px; // Rounded corners for a soft look
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Subtle shadow for depth
+  transition: transform 0.3s ease, box-shadow 0.3s ease; // Smooth animations
+
+  &:hover {
+    transform: scale(1.05); // Slight zoom-in effect on hover
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); // Deeper shadow on hover
+  }
+}
+
+.h-256 {
+  height: 256px; // Ensure consistent image height
+  border-radius: 12px; // Same rounded corners as above
 }

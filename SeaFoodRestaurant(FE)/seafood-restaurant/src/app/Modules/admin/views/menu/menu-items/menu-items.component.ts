@@ -11,6 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { ImageService } from '../../../../../core/services/image.service';
 import { forkJoin } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { DishRes } from '../../../../../share/dto/response/dish-response';
 
 
 @Component({
@@ -53,7 +54,7 @@ export class MenuItemsComponent implements OnInit {
     try {
       const fetchedDishes = await firstValueFrom(this.dishService.getDishes());
 
-      const imageObservables = fetchedDishes.map(dish =>
+      const imageObservables = fetchedDishes.map((dish: DishRes) =>
         this.imageService.getImage(dish.image)
       );
 

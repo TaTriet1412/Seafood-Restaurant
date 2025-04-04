@@ -15,17 +15,14 @@ public class RestaurantTable { // Renamed class to avoid conflict with java.awt.
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(name = "status", nullable = false, length = 50)
-    Boolean isAvailable = true; // Default from SQL
+    private Boolean status = true;
 
     @Column(nullable = false)
-    Integer capacity;
+    private Integer capacity;
 
-    // Owning side of the OneToOne relationship with OrderSession
-    // This table currently has this order session active.
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "curr_order_session_id", referencedColumnName = "id") // Foreign key
-            OrderSession currentOrderSession; // Field name referencing the active session
+    @Column(name = "curr_order_session_id")
+    private OrderSession currentOrderSession;
 }
