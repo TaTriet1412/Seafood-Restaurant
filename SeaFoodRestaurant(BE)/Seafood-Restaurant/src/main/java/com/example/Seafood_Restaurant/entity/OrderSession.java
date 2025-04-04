@@ -48,10 +48,4 @@ public class OrderSession {
 
     @Column(name = "payment_time")
     LocalDateTime paymentTime;
-
-    // Inverse side of the OneToOne relationship with RestaurantTable
-    // 'mappedBy' points to the field in RestaurantTable that owns the relationship
-    @OneToOne(mappedBy = "currentOrderSession", fetch = FetchType.LAZY)
-    @JsonIgnore // To prevent recursion
-            RestaurantTable table; // Field referencing the table using this session
 }

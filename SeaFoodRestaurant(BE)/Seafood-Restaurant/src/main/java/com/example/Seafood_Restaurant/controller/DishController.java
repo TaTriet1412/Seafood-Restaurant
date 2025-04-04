@@ -20,7 +20,7 @@ public class DishController {
     private DishService dishService;
 
     @GetMapping
-    public ResponseEntity<List<Dish>> getAllDishService() {
+    public ResponseEntity<List<Dish>> getAllDish() {
         return new ResponseEntity<>(dishService.getAllDishes(),HttpStatus.OK) ;
     }
 

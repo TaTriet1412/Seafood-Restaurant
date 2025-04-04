@@ -7,7 +7,6 @@ import com.example.Seafood_Restaurant.dto.response.UpdateOrderDetailStatusRespon
 import com.example.Seafood_Restaurant.entity.OrderDetail;
 import com.example.Seafood_Restaurant.service.OrderDetailService;
 import com.example.Seafood_Restaurant.utils.OrderDetailStatus;
-import jakarta.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,8 +7,12 @@
       <c-card-body>
         <c-row class="mb-3 full-width">
           <div class="filter-wrapper">
-            <p class="filter-label">Lọc: </p>
-            <select aria-label="Default select example" cSelect (change)="onSelectChange($event)">
+            <p class="filter-label">Lọc:</p>
+            <select
+              aria-label="Default select example"
+              cSelect
+              (change)="onSelectChange($event)"
+            >
               <option value="all">Tất cả</option>
               <option value="active">Đang hoạt động</option>
               <option value="inactive">Đang trống</option>
@@ -17,27 +21,52 @@
         </c-row>
         <c-row [gutter]="4" class="w-100 mb-3" [md]="3" [xs]="1">
           <c-col *ngFor="let table of tables">
-            <c-card [ngClass]="{ 'active-card': table.active, 'inactive-card': !table.active }">
-              <div class="table-number">{{ table.number }}</div>
-              <img 
-                cCardImg="top" 
+            <c-card
+              [ngClass]="{
+                'active-card': (isActiveTable(table.currentOrderSessionId)),
+                'inactive-card': !(isActiveTable(table.currentOrderSessionId))
+              }"
+            >
+              <div class="table-number">{{ table.id }}</div>
+              <img
+                cCardImg="top"
                 src="/assets/images/table/default-table.jpg"
-                [ngClass]="{ 'blur-image': !table.active }" 
-              >
+                [ngClass]="{
+                  'blur-image': !(isActiveTable(table.currentOrderSessionId))
+                }"
+              />
               <c-card-body>
-                <h5 cCardTitle [ngClass]="{ 'active-title': table.active, 'inactive-title': !table.active }">
-                  {{ table.active ? 'Đang hoạt động' : 'Đang trống' }}
+                <h5
+                  cCardTitle
+                  [ngClass]="{
+                    'active-title': (isActiveTable(table.currentOrderSessionId)),
+                    'inactive-title': !(isActiveTable(table.currentOrderSessionId))
+                  }"
+                >
+                  {{
+                    isActiveTable(table.currentOrderSessionId)
+                      ? "Đang hoạt động"
+                      : "Đang trống"
+                  }}
                 </h5>
-                <p cCardText *ngIf="table.active">
+                <p cCardText *ngIf="isActiveTable(table.currentOrderSessionId)">
                   5 món chưa hoàn thành
                 </p>
               </c-card-body>
               <c-card-footer>
                 <small class="text-medium-emphasis">
-                  <button *ngIf="table.active" (click)="goToTableOrder(table.number.toString())" class="btn btn-info">
+                  <button
+                    *ngIf="isActiveTable(table.currentOrderSessionId)"
+                    (click)="goToTableOrder(table.id.toString())"
+                    class="btn btn-info"
+                  >
                     Chi tiết <i class="fas fa-search"></i>
                   </button>
-                  <button *ngIf="!table.active" class="btn btn-success">
+                  <button
+                    *ngIf="!(isActiveTable(table.currentOrderSessionId))"
+                    class="btn btn-success"
+                    (click)="openTable(table.id.toString())"
+                  >
                     Mở bàn <i class="fas fa-plus"></i>
                   </button>
                 </small>

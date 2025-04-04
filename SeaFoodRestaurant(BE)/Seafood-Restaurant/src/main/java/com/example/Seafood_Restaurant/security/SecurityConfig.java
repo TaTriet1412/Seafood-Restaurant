@@ -29,10 +29,15 @@ public class SecurityConfig  {
                         // Allow access to /auth/register and /auth/login without JWT
                         .requestMatchers( "/auth/**")
                             .permitAll()
+
                         .requestMatchers("/dish/**")
                             .hasAnyRole("Manager","Staff")
                         .requestMatchers("/images/**")
                             .hasAnyRole("Manager", "Staff")
+
+                        .requestMatchers("/table/**")
+                            .hasAnyRole("Manager", "Staff")
+
 
                         .requestMatchers("/order-detail/check/**")
                             .hasAnyRole("Chef", "Staff")
@@ -41,13 +46,6 @@ public class SecurityConfig  {
                         .requestMatchers("/order-detail/cancelled/**")
                             .hasRole("Staff")
 
-                        // Chỉ ADMIN có quyền quản lý user
-                        .requestMatchers("/admin/**")
-                            .hasRole("ADMIN")
-
-                        // Secure the API endpoints that require JWT
-                        .requestMatchers("/api/**")
-                            .authenticated()  // Protect /api/** endpoints
 
                         // Any other request should be authenticated
                         .anyRequest().authenticated()
