@@ -22,12 +22,17 @@ public class DishService {
     }
 
     public Dish toggleAbleDish(AbleDishRequest req) {
-        Dish currDish = getDishById(req.orderId());
+        Dish currDish = getDishById(req.dishId());
         currDish.setAble(!currDish.getAble());
 
         return dishRepository.save(currDish);
     }
 
-
-
+    public List<Dish> getDishesByCategoryId(Long catId) {
+        List<Dish> dishes = dishRepository.findByCategoryId(catId);
+        if (dishes.isEmpty()) {
+            throw new RuntimeException("Không tìm thấy món ăn nào trong danh mục với ID: " + catId);
+        }
+        return dishes;
+    }
 }

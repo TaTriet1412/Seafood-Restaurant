@@ -31,6 +31,8 @@ public class SecurityConfig  {
                             .permitAll()
                         .requestMatchers("/dish/**")
                             .hasAnyRole("Manager","Staff")
+                        .requestMatchers("/images/**")
+                        .hasAnyRole("Manager", "Staff")
 
                         .requestMatchers("/order-detail/check/**")
                             .hasAnyRole("Chef", "Staff")

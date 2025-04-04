@@ -17,11 +17,8 @@ public class RestaurantTable { // Renamed class to avoid conflict with java.awt.
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "table_type", nullable = false, length = 100)
-    String tableType;
-
-    @Column(nullable = false, length = 50)
-    String status = "Available"; // Default from SQL
+    @Column(name = "status", nullable = false, length = 50)
+    Boolean isAvailable = true; // Default from SQL
 
     @Column(nullable = false)
     Integer capacity;
