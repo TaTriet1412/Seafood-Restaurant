@@ -40,6 +40,11 @@ import { NumberFormatService } from '../../../../../core/services/numberFormat.s
 import { SnackBarService } from '../../../../../core/services/snack-bar.service';
 import { NavAdminService } from '../../../../../core/services/nav-routing/nav-admin.service';
 import { ActivatedRoute } from '@angular/router';
+import { CategoryService } from '../../../../../core/services/category.service';
+import { CategoryRes } from '../../../../../share/dto/response/category-response';
+import { firstValueFrom } from 'rxjs';
+import { DishRes } from '../../../../../share/dto/response/dish-response';
+import { DishService } from '../../../../../core/services/dish.service';
 
 interface Dish {
   name: string;
@@ -99,41 +104,15 @@ export class TableOrderComponent implements OnInit {
   loadedData = false;
   nextId = 1;
   isNotifyKitchen = true;
-  selectedStatus = []; //mảng trạng thái được chọn 
+  selectedStatus = []; //mảng trạng thái được chọn
   statusList: any[] = []; //Mảng chứa tất cả trạng thái
+  categoryList: CategoryRes[] = []
+  dishList: DishRes[] = []
+  filteredDishes: DishRes[] = []
+  currItemToggleBody: any = null //biến item đang được mở hiện tại trong bảng
 
 
 
-  // Menu data structure
-  menuCategories: MenuCategory[] = [
-    {
-      name: 'Món chính',
-      value: 'mainDish',
-      dishes: [
-        { name: 'Phở', value: 'pho', price: 50000 },
-        { name: 'Cơm', value: 'com', price: 40000 },
-        { name: 'Bún chả', value: 'bunCha', price: 45000 }
-      ]
-    },
-    {
-      name: 'Tráng miệng',
-      value: 'dessert',
-      dishes: [
-        { name: 'Chè', value: 'che', price: 20000 },
-        { name: 'Bánh', value: 'banh', price: 25000 },
-        { name: 'Kem', value: 'kem', price: 30000 }
-      ]
-    },
-    {
-      name: 'Đồ uống',
-      value: 'drink',
-      dishes: [
-        { name: 'Trà đá', value: 'traDa', price: 10000 },
-        { name: 'Nước ngọt', value: 'nuocNgot', price: 20000 },
-        { name: 'Sinh tố', value: 'sinhTo', price: 35000 }
-      ]
-    }
-  ];
 
   ordersData: IItem[] = [];
 
@@ -156,19 +135,21 @@ export class TableOrderComponent implements OnInit {
     },
     {
       key: 'status',
-      _style: { width: '25%' },
+      _style: { width: '22%' },
       label: 'Trạng thái'
     },
     {
       key: 'show',
       label: '',
-      _style: { width: '5%' },
+      _style: { width: '8%' },
       filter: false,
       sorter: false
     }
   ];
 
   constructor(
+    private categoryService: CategoryService,
+    private dishService: DishService,
     private url: ActivatedRoute,
     private navAdminService: NavAdminService,
     private numberFormatService: NumberFormatService,
@@ -176,11 +157,14 @@ export class TableOrderComponent implements OnInit {
     private snackbarService: SnackBarService,
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.currTableId = Number(this.url.snapshot.paramMap.get('id'));
     this.loadDataOrder()
     this.nextId = this.ordersData.length + 1;
     this.loadedData = true;
+    const fetchedCategories = await firstValueFrom(this.categoryService.getCategories())
+    this.categoryList = fetchedCategories;
+
 
     // Dùng mảng  này nếu chỉ dùng phần tử bên trong
     // this.statusList = [...new Set(this.ordersData.map((item) => item['status']))];
@@ -223,13 +207,15 @@ export class TableOrderComponent implements OnInit {
 
   }
 
-  get filteredDishes() {
-    const category = this.menuCategories.find(c => c.value === this.selectedCategory);
-    return category ? category.dishes : [];
-  }
+
 
   onCategoryChange(event: Event) {
     this.selectedDish = ''; // Reset dish selection when category changes
+    const category = this.categoryList.find(c => c.name == this.selectedCategory)
+    this.dishService.getDishesByCatId(category?.id!)
+      .subscribe({
+        next: (res: DishRes[]) => this.filteredDishes = res
+      })
   }
 
   onSubmit(form: NgForm) {
@@ -242,40 +228,40 @@ export class TableOrderComponent implements OnInit {
 
       const dish = this.getSelectedDish();
       if (dish) {
-        // // Tìm xem món đã có trong ordersData chưa (dựa trên name hoặc value)
-        // const existingOrderIndex = this.ordersData.findIndex(
-        //   order => order['name'] === dish.name
-        // );
+        // Tìm xem món đã có trong ordersData chưa và trạng thái là Inactive (dựa trên name hoặc value)
+        const existingOrderIndex = this.ordersData.findIndex(
+          order => (order['name'] === dish.name) && order['status'] == "Inactive"
+        );
 
-        // if (existingOrderIndex !== -1) {
-        //   // Nếu món đã tồn tại, cập nhật số lượng và trạng thái
-        //   const updatedOrders = [...this.ordersData];
-        //   updatedOrders[existingOrderIndex] = {
-        //     ...updatedOrders[existingOrderIndex],
-        //     quantity: updatedOrders[existingOrderIndex]['quantity'] + this.quantity,
-        //     total: this.numberFormatService.formatNumber(
-        //       (updatedOrders[existingOrderIndex]['quantity'] + this.quantity) * 
-        //       updatedOrders[existingOrderIndex]['price']
-        //     ),
-        //     status: 'Inactive',
-        //     _props: { color: 'secondary', align: 'middle' }
-        //   };
+        if (existingOrderIndex !== -1) {
+          // Nếu món đã tồn tại, cập nhật số lượng và trạng thái
+          const updatedOrders = [...this.ordersData];
+          updatedOrders[existingOrderIndex] = {
+            ...updatedOrders[existingOrderIndex],
+            quantity: updatedOrders[existingOrderIndex]['quantity'] + this.quantity,
+            total: this.numberFormatService.formatNumber(
+              (updatedOrders[existingOrderIndex]['quantity'] + this.quantity) *
+              updatedOrders[existingOrderIndex]['price']
+            ),
+            status: 'Inactive',
+            _props: { color: 'secondary', align: 'middle' }
+          };
 
-        //   this.ordersData = updatedOrders;
-        // } else {
-        // }
-        // Nếu món chưa tồn tại, thêm mới
-        const newOrder: IItem = {
-          id: this.nextId++,
-          name: dish.name,
-          quantity: this.quantity,
-          price: dish.price,
-          total: this.numberFormatService.formatNumber(dish.price * this.quantity),
-          status: 'Inactive',
-          _props: { color: 'secondary', align: 'middle' }
-        };
+          this.ordersData = updatedOrders;
+        } else {
+          // Nếu món chưa tồn tại, thêm mới
+          const newOrder: IItem = {
+            id: this.nextId++,
+            name: dish.name,
+            quantity: this.quantity,
+            price: dish.price,
+            total: this.numberFormatService.formatNumber(dish.price * this.quantity),
+            status: 'Inactive',
+            _props: { color: 'secondary', align: 'middle' }
+          };
 
-        this.ordersData = [...this.ordersData, newOrder];
+          this.ordersData = [...this.ordersData, newOrder];
+        }
 
         this.onReset();
       }
@@ -286,6 +272,16 @@ export class TableOrderComponent implements OnInit {
   changeQuantitySubmit(form: NgForm, orderId: number) {
     this.validatedChange = true;
     let currOrder: any = this.ordersData.find(order => order['id'] == orderId)
+
+    let updatedOrders = [...this.ordersData];
+
+    this.ordersData = this.ordersData.map(o => {
+      return {
+        ...o,
+        quantity: o['id'] == orderId ? this.quantityToChange : o['quantity'],
+        total: o['id'] == orderId ? this.quantityToChange * o['price'] : o['total']
+      }
+    })
 
     //Gọi server thay đổi món
 
@@ -317,12 +313,9 @@ export class TableOrderComponent implements OnInit {
     this.formData = null;
   }
 
-  private getSelectedDish(): Dish | undefined {
-    for (const category of this.menuCategories) {
-      const dish = category.dishes.find(d => d.value === this.selectedDish);
-      if (dish) return dish;
-    }
-    return undefined;
+  private getSelectedDish(): DishRes | undefined {
+    const dish = this.filteredDishes.find(d => d.name = this.selectedDish)
+    return dish;
   }
 
   getRowIndex(index: any): number {
@@ -367,6 +360,7 @@ export class TableOrderComponent implements OnInit {
 
   // Sử lí sự kiến nhất nút show
   toggleDetails(item: any) {
+    this.currItemToggleBody = item;
     this.details_visible[item] = !this.details_visible[item];
     let currOrder = this.ordersData.find(order => order['id'] == item)
     this.quantityToChange = currOrder!['quantity'];
@@ -383,6 +377,9 @@ export class TableOrderComponent implements OnInit {
         status: order['status'] === 'Inactive' ? '' : order['status']
       };
     });
+    if(this.currItemToggleBody!=null) {
+      this.details_visible[this.currItemToggleBody] = !this.details_visible[this.currItemToggleBody];
+    }
     this.snackbarService.notifySuccess("Gửi thông báo thành công")
     this.cdf.detectChanges()
   }

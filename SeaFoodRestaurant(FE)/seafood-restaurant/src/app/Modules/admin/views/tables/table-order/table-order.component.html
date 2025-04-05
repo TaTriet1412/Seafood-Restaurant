@@ -28,8 +28,8 @@
             >
               <option value="" disabled selected>Chọn phân loại</option>
               <option
-                *ngFor="let category of menuCategories"
-                [value]="category.value"
+                *ngFor="let category of categoryList"
+                [value]="category.name"
               >
                 {{ category.name }}
               </option>
@@ -57,7 +57,7 @@
               [class.is-invalid]="validated && dish.invalid"
             >
               <option value="" disabled selected>Chọn món ăn</option>
-              <option *ngFor="let dish of filteredDishes" [value]="dish.value">
+              <option *ngFor="let dish of filteredDishes" [value]="dish.name">
                 {{ dish.name }}
               </option>
             </select>
@@ -277,11 +277,12 @@
               <button
                 (click)="toggleDetails(item.id)"
                 cButton
-                color="primary"
+                [color]="item.status == 'Inactive' ? 'primary' : 'secondary'"
                 size="sm"
                 variant="outline"
+                [disabled]="item.status!='Inactive'"
               >
-                Show
+                Chỉnh sửa
               </button>
               } @default {
               {{ tdContent }}
@@ -324,3 +325,6 @@
     </c-card>
   </c-col>
 </c-row>
+
+<!-- Modal -->
+

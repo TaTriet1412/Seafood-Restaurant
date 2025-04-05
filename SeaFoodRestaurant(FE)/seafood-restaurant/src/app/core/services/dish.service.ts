@@ -17,4 +17,8 @@ export class DishService {
     getDishes(): Observable<DishRes[]> {
         return this.http.get<DishRes[]>(`${this.apiUrl}`);
     }
+
+    getDishesByCatId(catId: number): Observable<DishRes[]> {
+        return this.http.get<DishRes[]>(`${this.apiUrl}/category/${catId}`)
+    }
 }
