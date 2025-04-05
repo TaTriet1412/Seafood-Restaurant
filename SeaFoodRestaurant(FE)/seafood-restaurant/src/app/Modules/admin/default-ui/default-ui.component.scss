@@ -20,6 +20,11 @@
   .sidebar-narrow-unfoldable .nav-link {
     overflow: hidden;
   }
+
+  // .header.header-sticky {
+  //   z-index: 1055;
+  // }
+
 }
 
 ng-scrollbar css variables .cui-scrollbar {
@@ -35,4 +40,3 @@ ng-scrollbar css variables .cui-scrollbar {
   --scrollbar-thumb-transition: height ease-out 150ms, width ease-out 150ms;
   --scrollbar-track-transition: height ease-out 150ms, width ease-out 150ms;
 }
-

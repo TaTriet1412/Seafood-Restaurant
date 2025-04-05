@@ -3,7 +3,7 @@
 
 
 
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import {
@@ -23,6 +23,10 @@ import {
   TableActiveDirective,
   TableColorDirective,
   CardModule,
+  ModalModule,
+  InputGroupComponent,
+  InputGroupTextDirective,
+  ModalComponent,
 } from '@coreui/angular';
 
 import {
@@ -66,8 +70,11 @@ interface MenuCategory {
     CardModule,
     FormsModule,
     CardComponent,
+    ModalModule,
     CardBodyComponent,
     CardHeaderComponent,
+    InputGroupComponent,
+    InputGroupTextDirective,
     SmartPaginationModule,
     ColComponent,
     CardFooterComponent,
@@ -92,6 +99,7 @@ interface MenuCategory {
   styleUrls: ['./table-order.component.scss'],
 })
 export class TableOrderComponent implements OnInit {
+  @ViewChild('staticBackdropModal') staticBackdropModal!: ModalComponent;
   currTableId: number = -1;
   selectedCategory: string = '';
   selectedDish: string = '';
@@ -110,7 +118,6 @@ export class TableOrderComponent implements OnInit {
   dishList: DishRes[] = []
   filteredDishes: DishRes[] = []
   currItemToggleBody: any = null //biến item đang được mở hiện tại trong bảng
-
 
 
 
@@ -381,6 +388,7 @@ export class TableOrderComponent implements OnInit {
       this.details_visible[this.currItemToggleBody] = !this.details_visible[this.currItemToggleBody];
     }
     this.snackbarService.notifySuccess("Gửi thông báo thành công")
+    this.staticBackdropModal.visible = false;
     this.cdf.detectChanges()
   }
 

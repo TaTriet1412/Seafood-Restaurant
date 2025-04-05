@@ -158,12 +158,14 @@
 
           <ng-template cTemplateId="tableCustomHeader">
             <div [cCol]="'auto'" class="p-0 ms-auto">
+              <!-- (click)="onKitchenNotification()" -->
               <button
-                (click)="onKitchenNotification()"
+                [cModalToggle]="staticBackdropModal.id"
                 cButton
                 [color]="isNotifyKitchen ? 'secondary' : 'primary'"
                 class="me-2"
                 [disabled]="isNotifyKitchen"
+                cButton
               >
                 <i class="fas fa-bullhorn me-1"></i> Thông báo bếp
               </button>
@@ -280,7 +282,7 @@
                 [color]="item.status == 'Inactive' ? 'primary' : 'secondary'"
                 size="sm"
                 variant="outline"
-                [disabled]="item.status!='Inactive'"
+                [disabled]="item.status != 'Inactive'"
               >
                 Chỉnh sửa
               </button>
@@ -305,7 +307,10 @@
         >
           <!-- Nút Thanh toán -->
           <c-col md="auto">
-            <button (click)="goToTableBill()" class="btn btn-primary payment-btn m-auto mb-2">
+            <button
+              (click)="goToTableBill()"
+              class="btn btn-primary payment-btn m-auto mb-2"
+            >
               <i class="fa-solid fa-credit-card"></i> Thanh toán ngay
             </button>
           </c-col>
@@ -327,4 +332,28 @@
 </c-row>
 
 <!-- Modal -->
-
+<c-modal #staticBackdropModal backdrop="static" id="staticBackdropModal">
+  <c-modal-header>
+    <h5 cModalTitle>Ghi chú thực đơn</h5>
+    <button
+      [cModalToggle]="staticBackdropModal.id"
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+    ></button>
+  </c-modal-header>
+  <c-modal-body>
+    <c-input-group>
+      <span cInputGroupText>Ghi chú</span>
+      <textarea aria-label="With textarea" cFormControl></textarea>
+    </c-input-group>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="staticBackdropModal.id" cButton color="secondary">
+      Đóng
+    </button>
+    <button cButton color="primary" (click)="onKitchenNotification()">
+      Thông báo bếp
+    </button>
+  </c-modal-footer>
+</c-modal>

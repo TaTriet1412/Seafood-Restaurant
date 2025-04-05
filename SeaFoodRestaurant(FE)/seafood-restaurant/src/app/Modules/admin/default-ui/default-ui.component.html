@@ -32,6 +32,7 @@
     class="mb-4 d-print-none header header-sticky p-0 shadow-sm"
     position="sticky"
     sidebarId="sidebar1"
+    (openNotificationRequest)="handleOpenNotificationRequest($event)"
   />
   <!--app-body-->
   <div class="body flex-grow-1">
@@ -42,3 +43,29 @@
   <!--app footer-->
   <app-default-footer />
 </div>
+
+<c-modal
+  #uiNotificationModal 
+  id="uiNotificationModal" 
+  (visibleChange)="$event === false && handleUiModalClose()"
+>
+  <c-modal-header>
+    <h5 cModalTitle>Chi tiết thông báo</h5>
+    <button [cModalToggle]="uiNotificationModal.id" type="button" class="btn-close" aria-label="Close"></button>
+  </c-modal-header>
+  <!-- Sử dụng signal notificationToShow() -->
+  <c-modal-body *ngIf="notificationToShow()">
+    <p><strong>Loại:</strong> {{ notificationToShow()?.notification_type }}</p>
+    <p><strong>Thời gian:</strong> {{ notificationToShow()?.created_at | date : "medium" }}</p>
+    <p><strong>Nội dung:</strong></p>
+    <p style="white-space: pre-wrap;">{{ notificationToShow()?.message }}</p>
+    <p *ngIf="notificationToShow()?.related_id">
+      <strong>ID liên quan:</strong> {{ notificationToShow()?.related_id }}
+    </p>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="uiNotificationModal.id" class="btn btn-secondary">
+      Đóng
+    </button>
+  </c-modal-footer>
+</c-modal>
