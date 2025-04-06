@@ -34,24 +34,29 @@
     <c-card class="mb-4 payment-card">
       <c-card-header>
         <b> Thanh toán </b>
+
+        <c-badge
+          [color]="isPaid ? 'success' : 'warning'"
+          shape="rounded-pill"
+          class="float-end status-badge"
+         >
+          {{ paymentStatusDisplay }}
+        </c-badge>
       </c-card-header>
       <c-card-body>
         <c-row
           class="align-items-center justify-content-between flex-column flex-md-row"
         >
-        <!-- Phần ghi chú -->
-         <c-col md="auto">
-             <c-input-group class="mb-3">
-                 <span cInputGroupText id="inputGroup-sizing-default">Ghi chú</span>
-                 <input aria-describedby="inputGroup-sizing-default"
-                     aria-label="Sizing example input"
-                     cFormControl
-                 />
-             </c-input-group>
-         </c-col>
+          <!-- Phần ghi chú -->
+          <c-col md="5" class="mb-3">
+            <c-input-group >
+              <span cInputGroupText>Ghi chú</span>
+              <textarea aria-label="With textarea" cFormControl></textarea>
+            </c-input-group>
+          </c-col>
 
           <!-- Thành tiền với icon -->
-          <c-col md="auto" class="text-end">
+          <c-col md="auto" class="text-end mb-3">
             <div class="payment-info d-flex justify-content-between">
               <div>
                 <i class="fa-solid fa-money-bill-wave"></i>
@@ -62,12 +67,20 @@
           </c-col>
 
           <!-- Nút Thanh toán -->
-          <c-col md="auto">
-            <button class="btn btn-primary payment-btn m-auto mb-2">
-                <div class="payment_logo">
-                    <img src="/assets/images/payment/vnpay-logo.jpg" alt="vnpay" class="img_logo">
-                </div>
-                Xác nhận thanh toán 
+          <c-col md="auto" class="mb-3">
+            <button
+              (click)="submitRecharge()"
+              [disabled]="isPaid"
+              class="btn btn-primary payment-btn m-auto mb-2"
+            >
+              <div class="payment_logo">
+                <img
+                  src="/assets/images/payment/vnpay-logo.jpg"
+                  alt="vnpay"
+                  class="img_logo"
+                />
+              </div>
+              Xác nhận thanh toán
             </button>
           </c-col>
         </c-row>

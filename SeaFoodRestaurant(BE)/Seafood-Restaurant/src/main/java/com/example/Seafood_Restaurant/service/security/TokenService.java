@@ -1,4 +1,4 @@
-package com.example.Seafood_Restaurant.service;
+package com.example.Seafood_Restaurant.service.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

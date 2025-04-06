@@ -26,19 +26,25 @@ public class SecurityConfig  {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        // Allow access to /auth/register and /auth/login without JWT
+//                        Auth
                         .requestMatchers( "/auth/**")
                             .permitAll()
 
+//                        Dish
                         .requestMatchers("/dish/**")
                             .hasAnyRole("Manager","Staff")
                         .requestMatchers("/images/**")
                             .hasAnyRole("Manager", "Staff")
 
+//                        Table
                         .requestMatchers("/table/**")
                             .hasAnyRole("Manager", "Staff")
 
+//                        Payment
+                        .requestMatchers("/payments/**")
+                            .hasAnyRole("Manager", "Staff")
 
+//                        OrderDetail
                         .requestMatchers("/order-detail/check/**")
                             .hasAnyRole("Chef", "Staff")
                         .requestMatchers("/order-detail/finished/**", "/order-detail/cooking/**", "/order-detail/ordered/**")

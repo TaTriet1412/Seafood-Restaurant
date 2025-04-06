@@ -5,7 +5,7 @@ import com.example.Seafood_Restaurant.dto.request.LogoutRequest;
 import com.example.Seafood_Restaurant.entity.User;
 import com.example.Seafood_Restaurant.security.JwtResponse;
 import com.example.Seafood_Restaurant.security.JwtTokenProvider;
-import com.example.Seafood_Restaurant.service.AuthService;
+import com.example.Seafood_Restaurant.service.security.AuthService;
 import com.google.gson.Gson;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

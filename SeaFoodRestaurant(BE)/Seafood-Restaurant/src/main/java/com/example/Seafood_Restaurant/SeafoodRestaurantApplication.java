@@ -1,6 +1,6 @@
 package com.example.Seafood_Restaurant;
 
-import com.example.Seafood_Restaurant.service.AuthService;
+import com.example.Seafood_Restaurant.service.security.AuthService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
