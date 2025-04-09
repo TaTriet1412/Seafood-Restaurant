@@ -84,7 +84,7 @@ CREATE TABLE `order_log` (
     `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NULL, -- Reference the specific order this log entry belongs to
     `message` VARCHAR(255),
-    `log_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`order_id`) REFERENCES `order`(`id`) ON DELETE CASCADE -- If the order is deleted, delete its logs too
 );
 
@@ -210,7 +210,7 @@ INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`
 (@order1_id, 7, 1, 39000, 'Ordered', NULL),        -- Rau muống xào tỏi (Dish ID: 7)
 (@order1_id, 27, 2, 40000, 'Served', 'Lạnh');      -- Bia Heineken Silver (Dish ID: 27)
 -- Order 1 Log Entries
-INSERT INTO `order_log` (`order_id`, `message`, `log_time`) VALUES
+INSERT INTO `order_log` (`order_id`, `message`, `created_at`) VALUES
 (@order1_id, 'Order created for session.', '2024-04-01 10:30:05'),
 (@order1_id, 'Dish ID 2 status changed to Served.', '2024-04-01 10:40:00'),
 (@order1_id, 'Dish ID 14 status changed to Cooking.', '2024-04-01 10:31:00'),
