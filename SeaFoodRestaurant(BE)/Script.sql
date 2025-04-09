@@ -231,7 +231,7 @@ INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`
 (@order2_id, 21, 1, 130000, 'Cooking', 'Ít cay'),      -- Sò huyết loại 1 rang me (Dish ID: 21)
 (@order2_id, 25, 1, 45000, 'Served', 'Không đá');     -- Nước ép cam tươi (Dish ID: 25)
 -- Order 2 Log Entries
-INSERT INTO `order_log` (`order_id`, `message`, `log_time`) VALUES
+INSERT INTO `order_log` (`order_id`, `message`, `created_at`) VALUES
 (@order2_id, 'Order created for session.', '2024-04-01 11:15:05'),
 (@order2_id, 'Dish ID 4 status changed to Served.', '2024-04-01 11:35:00'),
 (@order2_id, 'Dish ID 21 status changed to Cooking.', '2024-04-01 11:16:00'),
@@ -251,7 +251,7 @@ INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`
 (@order3_id, 22, 1, 175000, 'Served', NULL),         -- Bạch tuộc baby nướng (Dish ID: 22)
 (@order3_id, 30, 2, 50000, 'Served', NULL);          -- Panna Cotta (Dish ID: 30)
 -- Order 3 Log Entries
-INSERT INTO `order_log` (`order_id`, `message`, `log_time`) VALUES
+INSERT INTO `order_log` (`order_id`, `message`, `created_at`) VALUES
 (@order3_id, 'Order created for session.', '2024-04-01 18:00:05'),
 (@order3_id, 'All items served.', '2024-04-01 18:45:00'),
 (@order3_id, 'Order marked as Completed and Paid.', '2024-04-01 19:30:00');
