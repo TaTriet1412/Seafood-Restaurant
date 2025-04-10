@@ -57,7 +57,7 @@ CREATE TABLE `order_session` (
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `total_price` DECIMAL(10, 2) NOT NULL DEFAULT 0 CHECK (`total_price` >= 0),
     `is_paid` BIT NOT NULL DEFAULT 0,
-    `status` VARCHAR(50) DEFAULT 'Pending', -- e.g., Pending, In Progress, Completed, Cancelled
+    `status` VARCHAR(50) DEFAULT 'In Progress', -- e.g., In Progress, Completed
     `payment_time` DATETIME NULL DEFAULT NULL,
     FOREIGN KEY (`shift_id`) REFERENCES `shift`(`id`) ON DELETE SET NULL
 );
@@ -66,8 +66,7 @@ CREATE TABLE `order_session` (
 CREATE TABLE `table` (
     `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
     `table_number` INT NOT NULL UNIQUE, -- Added table number for clarity
-    `curr_order_session_id` BIGINT NULL DEFAULT NULL UNIQUE, -- A table can only have one active session at a time
-    FOREIGN KEY (`curr_order_session_id`) REFERENCES `order_session`(`id`) ON DELETE SET NULL -- If session is deleted, table becomes free
+    `curr_order_session_id` BIGINT NULL DEFAULT NULL UNIQUE -- A table can only have one active session at a time
 );
 
 
@@ -76,6 +75,7 @@ CREATE TABLE `order` (
     `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
     `order_session_id` BIGINT NOT NULL, -- Removed UNIQUE constraint here if one session can have multiple order additions, but keeping it based on original structure (1 order record per session)
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	`note` LONGTEXT,
     FOREIGN KEY (`order_session_id`) REFERENCES `order_session`(`id`) ON DELETE CASCADE -- If session is deleted, the main order record is deleted
 );
 
@@ -96,8 +96,7 @@ CREATE TABLE `order_detail` (
     `dish_id` BIGINT NOT NULL,
     `quantity` INT NOT NULL CHECK (`quantity` > 0),
     `price` DECIMAL(10, 2) NOT NULL, -- Price at the time of ordering
-    `status` VARCHAR(50) DEFAULT 'Ordered', -- e.g., Ordered, Cooking, Ready, Served, Cancelled
-    `note` TEXT,
+    `status` VARCHAR(50) DEFAULT 'Ordered', -- e.g., Ordered, Cooking, Finished, Cancelled
     FOREIGN KEY (`order_id`) REFERENCES `order`(`id`) ON DELETE CASCADE, -- If order is deleted, delete details
     FOREIGN KEY (`dish_id`) REFERENCES `dish`(`id`) ON DELETE RESTRICT -- Prevent deleting a dish if it's in an order detail
 );
@@ -109,7 +108,7 @@ CREATE TABLE `notification` (
     `user_id` BIGINT NULL,
     `message` TEXT NOT NULL,
     `status` BIT NOT NULL DEFAULT 0, -- 0: Unread, 1: Read
-    `notification_type` VARCHAR(50) NOT NULL, -- e.g., Order, Service, Stock, System
+    `notification_type` VARCHAR(50) NOT NULL, -- e.g., Order, Payment
     `related_id` BIGINT NULL, -- Related entity ID (e.g., order_id, table_id)
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (`role_id`) REFERENCES `role`(`id`) ON DELETE SET NULL,
@@ -124,13 +123,13 @@ INSERT INTO `role` (`name`) VALUES
 
 -- Insert Users
 INSERT INTO `user` (`name`, `email`, `password`, `phone`, `role_id`, `is_active`, `created_at`, `last_login`) VALUES
-('Tạ Triết', 'tatriet_tony@1zulieu.com', 'hashed_pw_1', '0901234567', 1, 1, '2024-01-10 09:00:00', '2024-03-27 10:30:00'),
-('Ngọc Quỳnh', 'quinnkiu@gmail.com', 'hashed_pw_2', '0907654321', 2, 1, '2024-01-15 11:00:00', '2024-03-26 14:45:00'),
-('Thành Tiến', 'thanhtien.z8436@gmail.com', 'hashed_pw_3', '0902444888', 3, 1, '2024-01-15 11:05:00', '2024-03-26 14:50:00'),
-('Văn A', 'vana@gmail.com', 'hashed_pw_4', '0903334444', 2, 1,'2024-02-01 08:00:00', '2024-03-26 09:30:00'),
-('Văn B', 'vabb@gmail.com', 'hashed_pw_5', '0909876543', 2, 1, '2024-02-10 10:00:00', '2024-03-27 16:20:00'),
-('Tâm Chef', 'tamchef@gmail.com', 'hashed_pw_6', '0901112222', 3, 1,'2024-02-15 09:00:00', '2024-03-27 17:45:00'),
-('Vũ Chef', 'vustaff@gmail.com', 'hashed_pw_7', '0909998887', 3, 1, '2024-02-20 11:30:00', '2024-03-27 09:15:00');
+('Tạ Triết', 'tatriet_tony@1zulieu.com', '123', '0901234567', 1, 1, '2024-01-10 09:00:00', '2024-03-27 10:30:00'),
+('Ngọc Quỳnh', 'quinnkiu@gmail.com', '123', '0907654321', 2, 1, '2024-01-15 11:00:00', '2024-03-26 14:45:00'),
+('Thành Tiến', 'thanhtien.z8436@gmail.com', '123', '0902444888', 3, 1, '2024-01-15 11:05:00', '2024-03-26 14:50:00'),
+('Văn A', 'vana@gmail.com', '123', '0903334444', 2, 1,'2024-02-01 08:00:00', '2024-03-26 09:30:00'),
+('Văn B', 'vabb@gmail.com', '123', '0909876543', 2, 1, '2024-02-10 10:00:00', '2024-03-27 16:20:00'),
+('Tâm Chef', 'tamchef@gmail.com', '123', '0901112222', 3, 1,'2024-02-15 09:00:00', '2024-03-27 17:45:00'),
+('Vũ Chef', 'vustaff@gmail.com', '123', '0909998887', 3, 1, '2024-02-20 11:30:00', '2024-03-27 09:15:00');
 
 -- Insert Categories
 INSERT INTO `category` (`name`) VALUES
@@ -200,66 +199,65 @@ INSERT INTO `table` (`table_number`, `curr_order_session_id`) VALUES
 INSERT INTO `order_session` (`shift_id`, `created_at`, `status`) VALUES
 (1, '2024-04-01 10:30:00', 'In Progress');
 SET @session1_id = LAST_INSERT_ID();
-INSERT INTO `order` (`order_session_id`, `created_at`) VALUES (@session1_id, NOW());
+INSERT INTO `order` (`order_session_id`, `created_at`, `note`) VALUES (@session1_id, NOW(), 'Tôm hấp kỹ, Bia lạnh');
 SET @order1_id = LAST_INSERT_ID();
 UPDATE `table` SET `curr_order_session_id` = @session1_id WHERE `table_number` = 1;
 -- Order 1 Details
-INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`, `note`) VALUES
-(@order1_id, 2, 1, 85000, 'Served', NULL),         -- Chả giò hải sản Hoàng Kim (Dish ID: 2)
-(@order1_id, 14, 1, 280000, 'Cooking', 'Hấp kỹ'),    -- Tôm sú hấp nước dừa xiêm (Dish ID: 14)
-(@order1_id, 7, 1, 39000, 'Ordered', NULL),        -- Rau muống xào tỏi (Dish ID: 7)
-(@order1_id, 27, 2, 40000, 'Served', 'Lạnh');      -- Bia Heineken Silver (Dish ID: 27)
+INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`) VALUES
+(@order1_id, 2, 1, 85000, 'Finished'),         -- Chả giò hải sản Hoàng Kim (Dish ID: 2)
+(@order1_id, 14, 1, 280000, 'Cooking'),    -- Tôm sú hấp nước dừa xiêm (Dish ID: 14)
+(@order1_id, 7, 1, 39000, 'Ordered'),        -- Rau muống xào tỏi (Dish ID: 7)
+(@order1_id, 27, 2, 40000, 'Finished');      -- Bia Heineken Silver (Dish ID: 27)
 -- Order 1 Log Entries
 INSERT INTO `order_log` (`order_id`, `message`, `created_at`) VALUES
 (@order1_id, 'Order created for session.', '2024-04-01 10:30:05'),
-(@order1_id, 'Dish ID 2 status changed to Served.', '2024-04-01 10:40:00'),
+(@order1_id, 'Dish ID 2 status changed to Finished.', '2024-04-01 10:40:00'),
 (@order1_id, 'Dish ID 14 status changed to Cooking.', '2024-04-01 10:31:00'),
 (@order1_id, 'Dish ID 7 status changed to Ordered.', '2024-04-01 10:30:15'),
-(@order1_id, 'Dish ID 27 status changed to Served.', '2024-04-01 10:35:00');
+(@order1_id, 'Dish ID 27 status changed to Finished.', '2024-04-01 10:35:00');
 
 
 -- Order 2 (Table 2, Session 2, In Progress)
 INSERT INTO `order_session` (`shift_id`, `created_at`, `status`) VALUES
 (1, '2024-04-01 11:15:00', 'In Progress');
 SET @session2_id = LAST_INSERT_ID();
-INSERT INTO `order` (`order_session_id`, `created_at`) VALUES (@session2_id, NOW());
+INSERT INTO `order` (`order_session_id`, `created_at`, `note`) VALUES (@session2_id, NOW(), 'Hàu thêm mỡ hành, Sò ít cay, nước ép cam không đá');
 SET @order2_id = LAST_INSERT_ID();
 UPDATE `table` SET `curr_order_session_id` = @session2_id WHERE `table_number` = 2;
 -- Order 2 Details
-INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`, `note`) VALUES
-(@order2_id, 4, 2, 120000, 'Served', 'Thêm mỡ hành'), -- Hàu sữa Pháp nướng mỡ hành (Dish ID: 4)
-(@order2_id, 21, 1, 130000, 'Cooking', 'Ít cay'),      -- Sò huyết loại 1 rang me (Dish ID: 21)
-(@order2_id, 25, 1, 45000, 'Served', 'Không đá');     -- Nước ép cam tươi (Dish ID: 25)
+INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`) VALUES
+(@order2_id, 4, 2, 120000, 'Finished'), -- Hàu sữa Pháp nướng mỡ hành (Dish ID: 4)
+(@order2_id, 21, 1, 130000, 'Cooking'),      -- Sò huyết loại 1 rang me (Dish ID: 21)
+(@order2_id, 25, 1, 45000, 'Finished');     -- Nước ép cam tươi (Dish ID: 25)
 -- Order 2 Log Entries
 INSERT INTO `order_log` (`order_id`, `message`, `created_at`) VALUES
 (@order2_id, 'Order created for session.', '2024-04-01 11:15:05'),
-(@order2_id, 'Dish ID 4 status changed to Served.', '2024-04-01 11:35:00'),
+(@order2_id, 'Dish ID 4 status changed to Finished.', '2024-04-01 11:35:00'),
 (@order2_id, 'Dish ID 21 status changed to Cooking.', '2024-04-01 11:16:00'),
-(@order2_id, 'Dish ID 25 status changed to Served.', '2024-04-01 11:20:00');
+(@order2_id, 'Dish ID 25 status changed to Finished.', '2024-04-01 11:20:00');
 
 
 -- Order 3 (Table 3 initially, Session 3, Completed and Paid)
 INSERT INTO `order_session` (`shift_id`, `created_at`, `status`, `is_paid`, `payment_time`) VALUES
 (2, '2024-04-01 18:00:00', 'Completed', 1, '2024-04-01 19:30:00');
 SET @session3_id = LAST_INSERT_ID();
-INSERT INTO `order` (`order_session_id`, `created_at`) VALUES (@session3_id, '2024-04-01 18:00:00');
+INSERT INTO `order` (`order_session_id`, `created_at`, `note`) VALUES (@session3_id, '2024-04-01 18:00:00', 'Thêm rau');
 SET @order3_id = LAST_INSERT_ID();
 -- Assume table 3 was occupied by session 3, but now it's free (curr_order_session_id is NULL or updated later)
 -- Order 3 Details
-INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`, `note`) VALUES
-(@order3_id, 18, 1, 380000, 'Served', 'Thêm rau'),       -- Lẩu riêu cua (Dish ID: 18)
-(@order3_id, 22, 1, 175000, 'Served', NULL),         -- Bạch tuộc baby nướng (Dish ID: 22)
-(@order3_id, 30, 2, 50000, 'Served', NULL);          -- Panna Cotta (Dish ID: 30)
+INSERT INTO `order_detail` (`order_id`, `dish_id`, `quantity`, `price`, `status`) VALUES
+(@order3_id, 18, 1, 380000, 'Finished'),       -- Lẩu riêu cua (Dish ID: 18)
+(@order3_id, 22, 1, 175000, 'Finished'),         -- Bạch tuộc baby nướng (Dish ID: 22)
+(@order3_id, 30, 2, 50000, 'Finished');          -- Panna Cotta (Dish ID: 30)
 -- Order 3 Log Entries
 INSERT INTO `order_log` (`order_id`, `message`, `created_at`) VALUES
 (@order3_id, 'Order created for session.', '2024-04-01 18:00:05'),
-(@order3_id, 'All items served.', '2024-04-01 18:45:00'),
+(@order3_id, 'All items Finished.', '2024-04-01 18:45:00'),
 (@order3_id, 'Order marked as Completed and Paid.', '2024-04-01 19:30:00');
 
 
 -- Insert Notifications
 INSERT INTO `notification` (`role_id`, `user_id`, `message`, `status`, `notification_type`, `related_id`, `created_at`) VALUES
-(3, NULL, CONCAT('Order #', @order1_id, ': Yêu cầu món Tôm sú hấp nước dừa (ID: 14)'), 0, 'Food Processing', @order1_id, '2024-04-01 10:31:00'), -- To Chefs
-(2, NULL, 'Bàn 2 yêu cầu phục vụ', 0, 'Service', 2, '2024-04-01 11:20:00'), -- To Staff, related to Table ID 2
-(1, NULL, CONCAT('Order #', @order3_id, ' đã thanh toán thành công'), 1, 'Payment', @order3_id, '2024-04-01 19:31:00'), -- To Manager
-(NULL, 2, CONCAT('Món Hàu sữa Pháp (ID: 4) của Order #', @order2_id, ' (Bàn 2) đã sẵn sàng'), 0, 'Food Ready', @order2_id, '2024-04-01 11:35:00'); -- To specific user Ngoc Quynh (ID 2)
+(3, 1, CONCAT('Order #', @order1_id, ': Yêu cầu món Tôm sú hấp nước dừa (ID: 14)'), 0, 'Order', @order1_id, '2024-04-01 10:31:00'), -- To Chefs
+(2, 2, CONCAT('Order #', @order3_id, ' đã thanh toán thành công'), 1, 'Payment', @order3_id, '2024-04-01 19:31:00'), -- To Manager
+(2, 2, CONCAT('Món Hàu sữa Pháp (ID: 4) của Order #', @order2_id, ' (Bàn 2) đã sẵn sàng'), 0, 'Order', @order2_id, '2024-04-01 11:35:00'); -- To specific user Ngoc Quynh (ID 2)
