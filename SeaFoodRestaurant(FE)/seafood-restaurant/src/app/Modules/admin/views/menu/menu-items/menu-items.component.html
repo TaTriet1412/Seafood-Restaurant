@@ -7,14 +7,18 @@
       <c-card-body>
         <c-row gutter="4" class="mb-3" [md]="3" [xs]="1">
           <c-col class="mb-4" *ngFor="let dish of dishes; index as i">
-            <c-card class="h-100">
+            <c-card class="h-100 position-relative">
               <img
                 class="h-256 object-fit-contain"
                 cCardImg="top"
                 [src]="dish['image']"
                 alt="Ảnh món ăn"
               />
-              <c-card-body>
+              <c-card-body class="position-relative">
+                <!-- Lớp phủ chỉ che phần thân -->
+                <div *ngIf="!dish.able" class="overlay">
+                  <span class="overlay-text">Hết món</span>
+                </div>
                 <h5 cCardTitle>
                   {{ dish["name"] }}
                 </h5>
@@ -26,9 +30,7 @@
                     <i class="fa-solid fa-money-bill-wave me-2"></i>
                     <span>Giá:</span>
                   </div>
-                  <span class="payment-amount"
-                    >{{ changePriceVND(dish["price"]) }} VNĐ</span
-                  >
+                  <span class="payment-amount">{{ changePriceVND(dish["price"]) }} VNĐ</span>
                 </div>
               </c-card-body>
             </c-card>
@@ -38,3 +40,5 @@
     </c-card>
   </c-col>
 </c-row>
+
+

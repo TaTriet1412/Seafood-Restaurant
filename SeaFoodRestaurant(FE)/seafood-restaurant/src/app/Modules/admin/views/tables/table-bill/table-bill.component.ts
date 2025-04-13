@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { BadgeModule, CardBodyComponent, CardHeaderComponent, CardModule, FormControlDirective, InputGroupComponent, InputGroupTextDirective, RowComponent, TableModule, TextColorDirective } from '@coreui/angular';
-import { ColComponent } from '@coreui/angular-pro';
+import { ColComponent, IItem } from '@coreui/angular-pro';
 import { NumberFormatService } from '../../../../../core/services/numberFormat.service';
 import { CommonModule } from '@angular/common';
 import { PaymentService } from '../../../../../core/services/payment.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { SnackBarService } from '../../../../../core/services/snack-bar.service';
 import { ROUTES } from '../../../../../core/constants/routes.constant';
+import { firstValueFrom } from 'rxjs';
+import { OrderSessionService } from '../../../../../core/services/order-session.service';
+import { TableService } from '../../../../../core/services/table.service';
 
 @Component({
   selector: 'app-table-bill',
@@ -17,9 +20,6 @@ import { ROUTES } from '../../../../../core/constants/routes.constant';
     CardModule,
     TableModule,
     CommonModule,
-    InputGroupComponent,
-    InputGroupTextDirective,
-    FormControlDirective,
     BadgeModule,
   ],
   templateUrl: './table-bill.component.html',
@@ -27,100 +27,101 @@ import { ROUTES } from '../../../../../core/constants/routes.constant';
 })
 export class TableBillComponent implements OnInit {
   bills: any[] = [];
-  currBillId = 1;
+  currTableId = -1;
+  currOrderSessionId = -1;
   paymentDetails: any = {};
   isPaid: boolean = false;
+  ordersData: any[] = [];
+  orderSessionStatus = "";
 
   constructor(
     private snackbarService: SnackBarService,
+    private tableService: TableService, 
+    private orderSessionService: OrderSessionService,
+    private url: ActivatedRoute,
     private numberFormatService: NumberFormatService,
     private paymentService: PaymentService,
-    private route: ActivatedRoute,
-    private router: Router,
   ) { }
 
-  ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      if (params['vnp_OrderInfo'] && params['vnp_PayDate'] && params['vnp_TransactionNo'] &&
-        params['vnp_Amount'] && params['vnp_TxnRef'] && params['vnp_ResponseCode']) {
-        this.paymentDetails = {
-          vnp_OrderInfo: params['vnp_OrderInfo'],
-          vnp_PayDate: params['vnp_PayDate'],
-          vnp_TransactionNo: params['vnp_TransactionNo'],
-          vnp_Amount: params['vnp_Amount'],
-          vnp_TxnRef: params['vnp_TxnRef'],
-          vnp_ResponseCode: params['vnp_ResponseCode'],
-          vnp_BankCode: params["vnp_BankCode"],
-          vnp_BankTranNo: params["vnp_BankTranNo"],
-          vnp_CardType: params["vnp_CardType"]
-        };
+  async ngOnInit(): Promise<void> {
+    this.currTableId = Number(this.url.snapshot.paramMap.get('id'));
+    const fetchedTable = await firstValueFrom(this.tableService.getTableById(this.currTableId))
+    this.currOrderSessionId = fetchedTable.currentOrderSessionId!;
 
-        this.paymentService.sendPaymentResult(this.paymentDetails)
-          .subscribe({
-            next: (response: any) => {
-              this.snackbarService.notifySuccess(response.message),
-              this.setQueryParams()
-            },
-            error: (response: any) => {
-              this.snackbarService.notifySuccess(response.error.message)
-            }
-          })
-      }
-    });
+    await this.loadDataOrder()
+
     this.loadBill()
   }
 
-  setQueryParams() {
-    const qParams: Params = {};
-    this.router.navigate([ROUTES.ADMIN.children.TABLE.children.BILL.fullPath("1")], {
-      relativeTo: this.route,
-      queryParams: qParams,
-      queryParamsHandling: ''
-    });
+  async loadDataOrder() {
+    const fetchedOrdersData = await firstValueFrom(this.orderSessionService.getOrdersByOrderSessionId(this.currOrderSessionId));
+    this.orderSessionStatus = fetchedOrdersData.status
+
+    this.ordersData = fetchedOrdersData?.orderDetails?.map((item: any) => {
+      const total = this.numberFormatService.formatNumber(item.price * item.quantity);
+
+      // Gán màu theo status
+      let color = 'secondary';
+      switch (item.status) {
+        case 'Ordered':
+          color = 'info';
+          break;
+        case 'Cooking':
+          color = 'warning';
+          break;
+        case 'Cancelled':
+          color = 'danger';
+          break;
+        case 'Finished':
+          color = 'success';
+          break;
+      }
+
+      return {
+        ...item,
+        total,
+        _props: {
+          align: 'middle',
+          color,
+        }
+      };
+    }) || [];
+
   }
 
-
   loadBill() {
-    this.bills = [
-      {
-        id: 1,
-        name: 'Phở',
-        quantity: 2,
-        price: 50000,
-        total: this.numberFormatService.formatNumber(100000),
-      },
-      {
-        id: 2,
-        name: 'Cơm gà',
-        quantity: 1,
-        price: 40000,
-        total: this.numberFormatService.formatNumber(40000),
-      },
-      {
-        id: 3,
-        name: 'Trà đá',
-        quantity: 3,
-        price: 10000,
-        total: this.numberFormatService.formatNumber(30000),
-      }
-    ];
+    this.bills = [];
+  }
+
+  translateStatus(status: String) {
+    switch (status) {
+      case 'Finished':
+        return 'Đã nấu xong';
+      case 'Cooking':
+        return 'Đang nấu';
+      case 'Ordered':
+        return 'Đã gửi yêu cầu';
+      case 'Cancelled':
+        return 'Hủy món';
+      default:
+        return 'Chưa gửi yêu cầu';
+    }
   }
 
 
   getTotalPrice(): string {
-    const totalPrice = this.getTotalPriceInt();
-    return this.numberFormatService.formatNumber(totalPrice)
+    return this.numberFormatService.formatNumber(this.getTotalPriceInt());
   }
 
   getTotalPriceInt(): number {
-    return this.bills.reduce((total, order) => total + order['price'] * order['quantity'], 0);
+    return this.ordersData.reduce((total, order) => total + Number.parseInt(order['total'].replace(/\./g, '')) , 0)
   }
 
   submitRecharge() {
-    const orderInfo = `Thanh toán tiền hóa đơn ${this.currBillId}`
-    const reBackUrl = ROUTES.ADMIN.children.TABLE.children.BILL.fullPath("1");
+    const orderInfo = `Thanh toán tiền hóa đơn ${this.currOrderSessionId}`
+    const reBackUrl = ROUTES.ADMIN.children.TABLE.children.LIST.fullPath;
 
-    this.paymentService.payByVnPay(this.getTotalPriceInt(), orderInfo, this.currBillId, reBackUrl)
+    this.paymentService.payByVnPay(this.getTotalPriceInt(), orderInfo, this.currOrderSessionId, reBackUrl)
       .subscribe({
         next: (response: any) => {
           if (response.redirectUrl) {
@@ -131,7 +132,7 @@ export class TableBillComponent implements OnInit {
       })
   }
 
-  
+
   get paymentStatusDisplay(): string {
     return this.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán';
   }

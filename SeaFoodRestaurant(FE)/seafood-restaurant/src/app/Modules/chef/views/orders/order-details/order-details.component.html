@@ -1,8 +1,9 @@
 <c-row ngPreserveWhitespaces>
   <c-col xs="12">
     <c-card class="mb-4">
-      <c-card-header>
+      <c-card-header class="bg-primary text-white d-flex justify-content-between align-items-center">
         <strong> Chi tiết đơn hàng </strong>
+        <span class="badge bg-warning text-dark fs-6">Bàn: {{ tableId }}</span>
       </c-card-header>
       <c-card-body>
         <c-smart-table
@@ -11,7 +12,7 @@
           [columns]="columns"
           [itemsPerPageSelect]="true"
           [itemsPerPage]="5"
-          [items]="ordersDetailData"
+          [items]="ordersData.slice().reverse()"
           [sorterValue]="{ column: 'name', state: 'asc' }"
           [tableBodyProps]="{ align: 'middle' }"
           [tableFilter]="true"
@@ -48,33 +49,54 @@
                 {{ translateStatus(item[columnName]) }}
               </c-badge>
               } @case ('accept') {
-              <button 
-                cButton 
-                color="success" 
-                size="sm" 
+              <button
+                cButton
+                color="success"
+                size="sm"
                 variant="outline"
-                [disabled]="isBlockBtnState(item['id'])"  
+                [disabled]="isBlockBtnState(item['id'])"
+                (click)="onAccepted(item['id'])"
               >
                 <i class="fa-solid fa-circle-check"></i>
                 Hoàn thành
               </button>
-              } @case ('reject') {
-              <button 
-                cButton 
-                color="danger" 
-                size="sm" 
-                variant="outline"
-                [disabled]="isBlockBtnState(item['id'])"  
-              >
-                <i class="fa-solid fa-ban"></i>
-                Hủy món
-              </button>
               }@default {
-                {{ tdContent }}
+              {{ tdContent }}
               }}
             </td>
           </ng-template>
         </c-smart-table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col xs="12">
+    <c-card class="mb-4 border-primary shadow">
+      <c-card-header class="bg-primary text-white">
+        <strong>📋 Danh sách ghi chú</strong>
+      </c-card-header>
+      <c-card-body>
+        <ul class="list-group">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center bg-light border border-primary rounded mb-2"
+            *ngFor="let note of (showAllNotes ? sortedNotes : sortedNotes.slice(0, 5))"
+          >
+            <span>
+              <i class="fa-solid fa-sticky-note text-primary me-2"></i> 
+              <strong>{{ note.text }}</strong>
+            </span>
+            <small class="text-muted">{{ note.createdAt | date: 'short' }}</small>
+          </li>
+        </ul>
+        <button
+          cButton
+          color="primary"
+          size="sm"
+          class="mt-3"
+          *ngIf="notes.length > 5"
+          (click)="toggleShowAllNotes()"
+        >
+          {{ showAllNotes ? 'Ẩn bớt' : 'Xem thêm' }}
+        </button>
       </c-card-body>
     </c-card>
   </c-col>

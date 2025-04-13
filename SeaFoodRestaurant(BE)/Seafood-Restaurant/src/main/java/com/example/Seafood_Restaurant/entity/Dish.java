@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Data
 @Entity
@@ -29,7 +30,7 @@ public class Dish {
     private String description;
 
     @Column(nullable = false, precision = 60, scale = 2)
-    private Integer price;
+    private BigInteger price;
 
     @Column
     private String image;

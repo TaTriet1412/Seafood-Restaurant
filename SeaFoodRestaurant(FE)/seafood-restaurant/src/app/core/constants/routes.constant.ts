@@ -23,7 +23,7 @@ export const ROUTES = {
                 children: {
                     LIST: {
                         path: 'list',
-                        fullPath: 'manager/tables/list'
+                        fullPath: '/manager/tables/list'
                     },
                     ORDER: {
                         path: ':id/table-order',
@@ -77,7 +77,7 @@ export const ROUTES = {
                 children: {
                     LIST: {
                         path: 'list',
-                        fullPath: 'staff/tables/list'
+                        fullPath: '/staff/tables/list'
                     },
                     ORDER: {
                         path: ':id/table-order',

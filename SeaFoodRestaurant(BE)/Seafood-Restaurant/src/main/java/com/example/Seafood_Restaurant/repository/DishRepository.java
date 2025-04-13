@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface DishRepository extends JpaRepository<Dish, Long> {
     List<Dish> findByCategoryId(Long catId);
+    List<Dish> findByCategoryIdAndAble(Long categoryId, Boolean able);
 }

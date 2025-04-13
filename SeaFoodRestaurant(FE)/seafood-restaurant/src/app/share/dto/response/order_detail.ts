@@ -1,9 +1,8 @@
 export interface OrderDetail {
     id: number;
-    name: string;
+    dishId: number;
+    dishName: string;
     quantity: number;
     price: number;
-    total: string;
     status: string;
-    _props: { color: string; align: string };
 }

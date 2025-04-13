@@ -58,20 +58,26 @@
               "
               [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
             >
-              @switch (columnName) { 
-                @case ('created_at') {
-                    {{ tdContent | date:'HH:mm:ss dd/MM/yyyy'}}
-                }
-                @case ('show') {
+              @switch (columnName) { @case ('created_at') {
+              {{ tdContent | date : "HH:mm:ss dd/MM/yyyy" }}
+              } @case ('table_id') {
+              {{ `Bàn ${tdContent}` }}
+              } @case ('status') {
+              {{ translateStatus(tdContent) }}
+              } @case ('show') {
               <button
                 cButton
-                [color]="item['status'] == 'Pending' ? 'primary' : 'success'"
+                [color]="
+                  item['status'] == 'In Progress' ? 'primary' : 'success'
+                "
                 size="sm"
                 variant="outline"
                 class="w-100"
                 (click)="handleClick(item)"
               >
-                  {{item['status'] == 'Pending' ? 'Chi tiết' : 'Bắt đầu nấu' }}
+                {{
+                  item["status"] == "In Progress" ? "Chi tiết" : "Bắt đầu nấu"
+                }}
               </button>
               } @default {
               {{ tdContent }}

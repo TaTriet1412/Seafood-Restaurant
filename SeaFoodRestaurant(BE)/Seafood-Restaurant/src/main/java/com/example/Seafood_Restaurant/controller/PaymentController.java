@@ -1,10 +1,14 @@
 package com.example.Seafood_Restaurant.controller;
 
 import com.example.Seafood_Restaurant.entity.OrderSession;
+import com.example.Seafood_Restaurant.entity.RestaurantTable;
 import com.example.Seafood_Restaurant.repository.OrderSessionRepository;
+import com.example.Seafood_Restaurant.service.OrderSessionService;
+import com.example.Seafood_Restaurant.service.TableService;
 import com.example.Seafood_Restaurant.service.payment.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +22,17 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/payments")
 @Controller
-public class VnPayController {
+public class PaymentController {
     @Autowired
     private VnPayService vnPayService;
     @Autowired
     private OrderSessionRepository orderSessionRepository;
+    @Autowired
+    @Lazy
+    private TableService tableService;
+    @Autowired
+    @Lazy
+    private OrderSessionService orderSessionService;
 
     @GetMapping("")
     public String home(){
@@ -77,9 +87,14 @@ public class VnPayController {
         // Lưu thời gian thanh toán
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         LocalDateTime paymentLocalDateTime = LocalDateTime.parse(paymentTime, formatter);
-        orderSession.setPaymentTime(paymentLocalDateTime);
-        orderSession.setIsPaid(true);
-        orderSessionRepository.save(orderSession);
+
+        orderSessionService.handlePaymentOrderSession(
+                paymentLocalDateTime,
+                Long.valueOf(orderSessionId),
+                orderSession
+        );
+
+
 
         // Xử lý theo kết quả trả về của cổng thanh toán
         if ("00".equals(vnp_ResponseCode)) {

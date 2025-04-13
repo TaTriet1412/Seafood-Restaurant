@@ -28,11 +28,22 @@ public class DishService {
         return dishRepository.save(currDish);
     }
 
-    public List<Dish> getDishesByCategoryId(Long catId) {
-        List<Dish> dishes = dishRepository.findByCategoryId(catId);
-        if (dishes.isEmpty()) {
-            throw new RuntimeException("Không tìm thấy món ăn nào trong danh mục với ID: " + catId);
+    public List<Dish> getDishesByCategoryIdAndAble(Long catId, Boolean able) {
+        List<Dish> dishes;
+
+        if (able == null) {
+            // No filtering by 'able', return all dishes for the category
+            dishes = dishRepository.findByCategoryId(catId);
+        } else {
+            // Filter dishes based on the 'able' property
+            dishes = dishRepository.findByCategoryIdAndAble(catId, able);
         }
+
+        if (dishes.isEmpty()) {
+            throw new RuntimeException("Không tìm thấy món ăn nào trong danh mục với ID: " + catId +
+                    (able != null ? " và trạng thái 'able' = " + able : ""));
+        }
+
         return dishes;
     }
 }

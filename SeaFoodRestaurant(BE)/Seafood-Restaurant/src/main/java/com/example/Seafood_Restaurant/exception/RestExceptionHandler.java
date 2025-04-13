@@ -47,4 +47,12 @@ public class RestExceptionHandler {
         apiError.setMessage(e.getErrorCode().getMessage());
         return buildResponseEntity(apiError);
     }
+
+    @ExceptionHandler(SimpleHttpException.class)
+    protected ResponseEntity<Object> handleSimpleHttpException(SimpleHttpException ex) {
+        ApiError apiError = new ApiError(ex.getStatus());
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
 }

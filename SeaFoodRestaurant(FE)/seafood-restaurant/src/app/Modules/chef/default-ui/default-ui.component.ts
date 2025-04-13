@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import {
   ContainerComponent,
+  ModalComponent,
+  ModalModule,
   ShadowOnScrollDirective,
   SidebarBrandComponent,
   SidebarComponent,
@@ -18,6 +20,8 @@ import { navItems } from './_nav';
 
 import { NgScrollbar } from 'ngx-scrollbar';
 import { SidebarModule } from '@coreui/angular-pro';
+import { CommonModule } from '@angular/common';
+import { Notification } from '../../../share/dto/response/notification-response';
 
 @Component({
   selector: 'app-default-ui',
@@ -38,6 +42,8 @@ import { SidebarModule } from '@coreui/angular-pro';
     RouterOutlet,
     RouterLink,
     ShadowOnScrollDirective,
+    ModalModule,
+    CommonModule,
   ],
   templateUrl: './default-ui.component.html',
   styleUrl: './default-ui.component.scss'
@@ -45,4 +51,22 @@ import { SidebarModule } from '@coreui/angular-pro';
 export class DefaultUiComponent {
   public navItems = [...navItems];
 
+  // **** THÊM State và ViewChild cho Modal ****
+  notificationToShow = signal<Notification | null>(null);
+  @ViewChild('uiNotificationModal') notificationModal?: ModalComponent; // Tham chiếu đến modal trong template
+
+  // **** THÊM Hàm xử lý sự kiện từ con ****
+  handleOpenNotificationRequest(notification: Notification): void {
+    console.log('Parent received request to open modal for:', notification);
+    this.notificationToShow.set(notification);
+    // Mở modal theo cách lập trình
+    this.notificationModal!.visible = true;
+  }
+
+  // **** THÊM Hàm xử lý khi modal đóng ****
+  handleUiModalClose(): void {
+    console.log('Parent modal closed');
+    // Reset dữ liệu khi modal đóng để đảm bảo lần mở sau đúng
+    this.notificationToShow.set(null);
+  }
 }

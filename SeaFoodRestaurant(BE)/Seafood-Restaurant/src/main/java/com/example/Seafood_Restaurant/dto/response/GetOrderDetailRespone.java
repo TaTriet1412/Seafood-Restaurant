@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Data
 @Builder
@@ -21,7 +22,7 @@ public class GetOrderDetailRespone {
     long orderId;
     long dishId;
     Integer quantity;
-    BigDecimal price; // Price at the time of ordering
+    BigInteger price;
     String status;
     String note;
 }

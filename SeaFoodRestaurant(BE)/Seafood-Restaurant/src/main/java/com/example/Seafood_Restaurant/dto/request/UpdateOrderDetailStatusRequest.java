@@ -15,6 +15,6 @@ import static lombok.AccessLevel.PRIVATE;
 @Builder
 @FieldDefaults(level = PRIVATE)
 public class UpdateOrderDetailStatusRequest {
-    long id;
+    Long id;
 }
 

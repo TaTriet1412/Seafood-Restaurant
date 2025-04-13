@@ -1,8 +1,11 @@
 package com.example.Seafood_Restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -18,4 +21,5 @@ public class RestaurantTable {
 
     @Column(name = "curr_order_session_id")
     Long currentOrderSessionId;
+
 }

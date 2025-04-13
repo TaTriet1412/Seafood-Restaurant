@@ -1,11 +1,12 @@
 <c-row ngPreserveWhitespaces>
   <c-col xs="12">
     <c-card class="mb-4">
-      <c-card-header>
+      <c-card-header class="d-flex justify-content-between align-items-center">
         <strong>Quản lý bàn ăn</strong>
+        <button class="btn btn-primary" (click)="generateCode()">Tạo mã</button>
       </c-card-header>
       <c-card-body>
-        <c-row class="mb-3 full-width">
+        <!-- <c-row class="mb-3 full-width">
           <div class="filter-wrapper">
             <p class="filter-label">Lọc:</p>
             <select
@@ -18,13 +19,13 @@
               <option value="inactive">Đang trống</option>
             </select>
           </div>
-        </c-row>
+        </c-row> -->
         <c-row [gutter]="4" class="w-100 mb-3" [md]="3" [xs]="1">
           <c-col *ngFor="let table of tables">
             <c-card
               [ngClass]="{
-                'active-card': (isActiveTable(table.currentOrderSessionId)),
-                'inactive-card': !(isActiveTable(table.currentOrderSessionId))
+                'active-card': isActiveTable(table.currentOrderSessionId),
+                'inactive-card': !isActiveTable(table.currentOrderSessionId)
               }"
             >
               <div class="table-number">{{ table.id }}</div>
@@ -32,15 +33,17 @@
                 cCardImg="top"
                 src="/assets/images/table/default-table.jpg"
                 [ngClass]="{
-                  'blur-image': !(isActiveTable(table.currentOrderSessionId))
+                  'blur-image': !isActiveTable(table.currentOrderSessionId)
                 }"
               />
               <c-card-body>
                 <h5
                   cCardTitle
                   [ngClass]="{
-                    'active-title': (isActiveTable(table.currentOrderSessionId)),
-                    'inactive-title': !(isActiveTable(table.currentOrderSessionId))
+                    'active-title': isActiveTable(table.currentOrderSessionId),
+                    'inactive-title': !isActiveTable(
+                      table.currentOrderSessionId
+                    )
                   }"
                 >
                   {{
@@ -49,25 +52,40 @@
                       : "Đang trống"
                   }}
                 </h5>
-                <p cCardText *ngIf="isActiveTable(table.currentOrderSessionId)">
+                <!-- <p cCardText *ngIf="isActiveTable(table.currentOrderSessionId)">
                   5 món chưa hoàn thành
-                </p>
+                </p> -->
               </c-card-body>
               <c-card-footer>
                 <small class="text-medium-emphasis">
+                  <!-- Nút Chi tiết -->
                   <button
-                    *ngIf="isActiveTable(table.currentOrderSessionId)"
+                    *ngIf="
+                      table.paymentTime === null &&
+                      table.currentOrderSessionId !== null
+                    "
                     (click)="goToTableOrder(table.id.toString())"
                     class="btn btn-info"
                   >
                     Chi tiết <i class="fas fa-search"></i>
                   </button>
+
+                  <!-- Nút Mở bàn -->
                   <button
-                    *ngIf="!(isActiveTable(table.currentOrderSessionId))"
+                    *ngIf="table.paymentTime === null && table.currentOrderSessionId === null"
                     class="btn btn-success"
-                    (click)="openTable(table.id.toString())"
+                    (click)="openTableModal(table.id.toString())"
                   >
                     Mở bàn <i class="fas fa-plus"></i>
+                  </button>
+
+                  <!-- Nút Đóng bàn -->
+                  <button
+                    *ngIf="table.paymentTime !== null"
+                    class="btn btn-danger"
+                    (click)="closeTable(table.id.toString())"
+                  >
+                    Đóng bàn <i class="fas fa-times"></i>
                   </button>
                 </small>
               </c-card-footer>
@@ -78,3 +96,71 @@
     </c-card>
   </c-col>
 </c-row>
+
+<!-- Modal hiển thị mã code -->
+<c-modal
+  [visible]="isCodeModalVisible"
+  (visibleChange)="isCodeModalVisible = $event"
+  size="lg"
+  aria-labelledby="codeModalLabel"
+>
+  <c-modal-header>
+    <h5 class="modal-title" id="codeModalLabel">Mã Code</h5>
+    <button
+      type="button"
+      class="btn-close"
+      (click)="isCodeModalVisible = false"
+      aria-label="Close"
+    ></button>
+  </c-modal-header>
+  <c-modal-body>
+    <div class="text-center">
+      <h3>{{ currentCode }}</h3>
+    </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <button
+      type="button"
+      class="btn btn-secondary"
+      (click)="isCodeModalVisible = false"
+    >
+      Đóng
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="copyCodeToClipboard()"
+    >
+      Copy <i class="fas fa-copy"></i>
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+<!-- Modal xác nhận mở bàn -->
+<c-modal
+  [visible]="isOpenTableModalVisible"
+  (visibleChange)="isOpenTableModalVisible = $event"
+  size="sm"
+  backdrop="static"
+  keyboard="false"
+>
+  <c-modal-header>
+    <h5 class="modal-title">Xác nhận mở bàn</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <p>Vui lòng nhập mã xác nhận (6 số):</p>
+    <input
+      type="text"
+      class="form-control"
+      [(ngModel)]="enteredCode"
+      placeholder="Nhập mã xác nhận"
+      maxlength="6"
+      pattern="[0-9]*"
+    />
+    <small class="text-danger" *ngIf="isCodeInvalid">Mã xác nhận không đúng!</small>
+  </c-modal-body>
+  <c-modal-footer>
+    <button class="btn btn-secondary" (click)="closeModal()">Hủy</button>
+    <button class="btn btn-primary" (click)="confirmOpenTable()">Xác nhận</button>
+  </c-modal-footer>
+</c-modal>

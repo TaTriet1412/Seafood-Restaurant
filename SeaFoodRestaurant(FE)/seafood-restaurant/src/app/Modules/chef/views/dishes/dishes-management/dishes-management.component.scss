@@ -90,13 +90,6 @@ select[cSelect] {
 }
 
 
-// .blur-image {
-//   filter: grayscale(100%);
-//   opacity: 0.5; // Hiệu ứng làm mờ ảnh
-//   transition: none; // Loại bỏ hiệu ứng hover
-// }
-
-
 .table-number {
   position: absolute; // Đặt số bàn chồng lên hình ảnh
   top: 12px; // Cách cạnh trên một khoảng
@@ -119,12 +112,20 @@ select[cSelect] {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.2); /* Màu phủ */
-  border-radius: inherit;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   z-index: 1;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  pointer-events: none;
+  border-radius: 0.25rem; /* Bo góc nếu cần */
 }
 
-.blurred-content {
-  opacity: 0.6; /* Làm mờ nội dung */
-  filter: grayscale(80%); /* Làm xám nội dung */
+.overlay-text {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
+

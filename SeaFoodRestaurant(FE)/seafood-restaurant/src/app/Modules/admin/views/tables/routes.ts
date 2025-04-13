@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { ROUTES } from '../../../../core/constants/routes.constant';
+import { CanDeactivateGuard } from '../../../../core/guards/can-deactivate.guard';
 
 
 export const routes: Routes = [
@@ -28,6 +29,7 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./table-order/table-order.component')
                         .then(m => m.TableOrderComponent),
+                canDeactivate: [CanDeactivateGuard],
                 data: {
                     title: 'Table-Order'
                 },

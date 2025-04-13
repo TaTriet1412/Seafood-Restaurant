@@ -10,6 +10,7 @@ import com.example.Seafood_Restaurant.utils.OrderDetailStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -40,7 +41,6 @@ public class OrderDetailController {
                 .quantity(orderDetail.getQuantity())
                 .price(orderDetail.getPrice())
                 .status(orderDetail.getStatus())
-                .note(orderDetail.getNote())
                 .build());
 
         apiRespone.setMessage("Get order detail successfully");
@@ -50,19 +50,14 @@ public class OrderDetailController {
 
     // endpoint để bếp chuyển trạng thái món về lại thành chưa nấu
     @PutMapping("/ordered")
-    public ApiRespone<UpdateOrderDetailStatusRespone> ordered(@RequestBody UpdateOrderDetailStatusRequest request) {
-        ApiRespone<UpdateOrderDetailStatusRespone> apiRespone = new ApiRespone<>();
+    public ResponseEntity<UpdateOrderDetailStatusRespone> ordered(@RequestBody UpdateOrderDetailStatusRequest request) {
 
-        orderDetailService.updateOrderDetailStatus(request.getId(), OrderDetailStatus.ORDERED);
+        orderDetailService.updateOrderDetailStatus(request.getId(),OrderDetailStatus.ORDERED);
 
-        apiRespone.setResult(UpdateOrderDetailStatusRespone.builder()
+        return ResponseEntity.ok( UpdateOrderDetailStatusRespone.builder()
                 .id(request.getId())
                 .status(orderDetailService.getOrderDetailStatus(request.getId()))
                 .build());
-
-        apiRespone.setMessage("Update status successfully");
-
-        return apiRespone;
     }
 
     // endpoint để bếp trạng thái món thành đang nấu
@@ -70,7 +65,7 @@ public class OrderDetailController {
     public ApiRespone<UpdateOrderDetailStatusRespone> preparing(@RequestBody UpdateOrderDetailStatusRequest request) {
         ApiRespone<UpdateOrderDetailStatusRespone> apiRespone = new ApiRespone<>();
 
-        orderDetailService.updateOrderDetailStatus(request.getId(), OrderDetailStatus.COOKING);
+        orderDetailService.updateOrderDetailStatus(request.getId(),OrderDetailStatus.COOKING);
 
 
         apiRespone.setResult(UpdateOrderDetailStatusRespone.builder()
@@ -84,36 +79,30 @@ public class OrderDetailController {
     }
 
     // endpoint để phục vụ hủy món (bếp chưa bắt đầu nấu)
-    @PutMapping("/cancelled")
-    public ApiRespone<UpdateOrderDetailStatusRespone> cancelled(@RequestBody UpdateOrderDetailStatusRequest request) {
-        ApiRespone<UpdateOrderDetailStatusRespone> apiRespone = new ApiRespone<>();
-
-        orderDetailService.updateOrderDetailStatus(request.getId(), OrderDetailStatus.CANCELLED);
-
-        apiRespone.setResult(UpdateOrderDetailStatusRespone.builder()
-                .id(request.getId())
-                .status(orderDetailService.getOrderDetailStatus(request.getId()))
-                .build());
-
-        apiRespone.setMessage("Update status successfully");
-
-        return apiRespone;
-    }
+//    @PutMapping("/cancelled")
+//    public ApiRespone<UpdateOrderDetailStatusRespone> cancelled(@RequestBody UpdateOrderDetailStatusRequest request) {
+//        ApiRespone<UpdateOrderDetailStatusRespone> apiRespone = new ApiRespone<>();
+//
+//        orderDetailService.updateOrderDetailStatus(request.getId(), request.getUserId(),OrderDetailStatus.CANCELLED);
+//
+//        apiRespone.setResult(UpdateOrderDetailStatusRespone.builder()
+//                .id(request.getId())
+//                .status(orderDetailService.getOrderDetailStatus(request.getId()))
+//                .build());
+//
+//        apiRespone.setMessage("Update status successfully");
+//
+//        return apiRespone;
+//    }
 
     // endpoint để bếp thông báo món đã nấu xong
     @PutMapping("/finished")
-    public ApiRespone<UpdateOrderDetailStatusRespone> finished(@RequestBody UpdateOrderDetailStatusRequest request) {
-        ApiRespone<UpdateOrderDetailStatusRespone> apiRespone = new ApiRespone<>();
+    public ResponseEntity<UpdateOrderDetailStatusRespone> finished(@RequestBody UpdateOrderDetailStatusRequest request) {
+        orderDetailService.updateOrderDetailStatus(request.getId(),OrderDetailStatus.FINISHED);
 
-        orderDetailService.updateOrderDetailStatus(request.getId(), OrderDetailStatus.FINISHED);
-
-        apiRespone.setResult(UpdateOrderDetailStatusRespone.builder()
+        return ResponseEntity.ok( UpdateOrderDetailStatusRespone.builder()
                 .id(request.getId())
                 .status(orderDetailService.getOrderDetailStatus(request.getId()))
                 .build());
-
-        apiRespone.setMessage("Update status successfully");
-
-        return apiRespone;
     }
 }

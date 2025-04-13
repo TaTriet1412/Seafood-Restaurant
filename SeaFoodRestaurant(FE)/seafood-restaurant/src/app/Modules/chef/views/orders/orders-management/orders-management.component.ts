@@ -34,6 +34,9 @@ import {
 import { NumberFormatService } from '../../../../../core/services/numberFormat.service';
 import { SnackBarService } from '../../../../../core/services/snack-bar.service';
 import { NavChefService } from '../../../../../core/services/nav-routing/nav-chef.service';
+import { firstValueFrom } from 'rxjs';
+import { OrderSessionService } from '../../../../../core/services/order-session.service';
+import { OrderSessionRes } from '../../../../../share/dto/response/order_session-response';
 
 
 
@@ -65,6 +68,7 @@ import { NavChefService } from '../../../../../core/services/nav-routing/nav-che
 export class OrdersManagementComponent implements OnInit {
   loadedData = false;
   ordersSessionData: IItem[] = [];
+  orderSessionDataRaw: OrderSessionRes[] = [];
 
 
   columns: (IColumn | string)[] = [
@@ -75,9 +79,9 @@ export class OrdersManagementComponent implements OnInit {
       _props: { class: 'fw-bold' }
     },
     {
-      key: 'note',
-      label: 'Ghi chú',
-      _style: { width: '25%' },
+      key: 'table_id',
+      label: 'Số bàn',
+      _style: { width: '10%' },
       _props: { class: 'fw-bold' }
     },
     {
@@ -87,7 +91,7 @@ export class OrdersManagementComponent implements OnInit {
       _props: { class: 'fw-bold' }
     },
     {
-      key: 'description',
+      key: 'status',
       label: 'Trạng thái',
       _style: { width: '15%' },
       _props: { class: 'fw-bold' }
@@ -102,40 +106,51 @@ export class OrdersManagementComponent implements OnInit {
   ];
 
   constructor(
+    private orderSessionService: OrderSessionService,
     private navChefService: NavChefService,
     private numberFormatService: NumberFormatService,
     private cdf: ChangeDetectorRef,
     private snackbarService: SnackBarService,
   ) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
+    const fetchedOrdersData = await firstValueFrom(this.orderSessionService.getOrdersInProgressOrOrdered())
+    this.orderSessionDataRaw = fetchedOrdersData;
     this.loadDataOrdersSession()
     this.loadedData = true;
   }
 
-  loadDataOrdersSession(){
-    this.ordersSessionData = [
-      {
-        id: 1,
-        note: "Khách không muốn ăn rau",
-        created_at: "2024-03-29T14:30:45Z",
-        status: "Pending", // chưa nấu, đang nấu, đã nấu,
-        description: "5 món đang nấu"
-      },
-      {
-        id: 2,
-        note: "Khách muốn có cơm thêm",
-        created_at: "2024-03-29T14:30:45Z",
-        status: "", // chưa nấu
-        description: "1 món chưa nấu"
-      }
-    ]
-
+  loadDataOrdersSession() {
+    this.ordersSessionData = this.orderSessionDataRaw.map((order: OrderSessionRes) => ({
+      id: order.orderSessionId,
+      table_id: order.tableId,
+      created_at: order.createAt,
+      status: order.status
+    }));
+    console.log(this.ordersSessionData)
   }
 
-  handleClick(item : IItem) {
-    if(item['status'] == 'Pending') {
+  translateStatus(status: string) {
+    switch (status) {
+      case "In Progress":
+        return "Đang nấu"
+      case "Ordered":
+        return "Khách gọi món"
+      default:
+        return ""
+    }
+  }
+
+  async handleClick(item: IItem) {
+    if (item['status'] == 'In Progress') {
       this.goToOrderDetail(item['id'].toString())
+    } else {
+      this.loadedData = false;
+      await firstValueFrom (this.orderSessionService.updateAllOrderDetailsToCooking(item['id']))
+      const fetchedOrdersData = await firstValueFrom(this.orderSessionService.getOrdersInProgressOrOrdered())
+      this.orderSessionDataRaw = fetchedOrdersData;
+      this.loadDataOrdersSession()
+      this.loadedData = true;
     }
   }
 

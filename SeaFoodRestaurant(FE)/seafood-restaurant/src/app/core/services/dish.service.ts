@@ -18,7 +18,11 @@ export class DishService {
         return this.http.get<DishRes[]>(`${this.apiUrl}`);
     }
 
-    getDishesByCatId(catId: number): Observable<DishRes[]> {
-        return this.http.get<DishRes[]>(`${this.apiUrl}/category/${catId}`)
+    getDishesByCatIdAbleTrue(catId: number): Observable<DishRes[]> {
+        return this.http.get<DishRes[]>(`${this.apiUrl}/category/${catId}?able=true`)
+    }
+
+    toggleAbleDish(dishId: number): Observable<any> {
+        return this.http.put<any>(`${this.apiUrl}/able`, {dishId});
     }
 }

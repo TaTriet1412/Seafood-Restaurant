@@ -17,4 +17,12 @@ export class TableService {
     getTables(): Observable<TableRes[]> {
         return this.http.get<TableRes[]>(`${this.apiUrl}`);
     }
+
+    getTableById(id: number): Observable<TableRes> {
+        return this.http.get<TableRes>(`${this.apiUrl}/${id}`);
+    }
+
+    offTable(id: number): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/${id}/off`, null);
+    }
 }

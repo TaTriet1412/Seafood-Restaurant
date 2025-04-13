@@ -1,8 +1,12 @@
 package com.example.Seafood_Restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 // No direct relationships shown needing bidirectional mapping in user's style yet
 // Order will have a OneToOne mapping to this
@@ -23,8 +27,12 @@ public class OrderLog {
     @Column // Default length 255
     String message;
 
-    // Nếu cần truy cập Order từ OrderLog, thêm:
-    // @OneToOne(mappedBy = "orderLog", fetch = FetchType.LAZY)
-    // @JsonIgnore // Tránh vòng lặp
-    // Order order;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonBackReference
+    @JoinColumn(name = "order_id") // Foreign key column
+    Order order;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    LocalDateTime createdAt;
 }

@@ -1,15 +1,14 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
-import {  Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
+import { Component, computed, EventEmitter, inject, input, OnInit, Output, signal, WritableSignal } from '@angular/core';
+import { Router } from '@angular/router';
 
 import {
   AvatarComponent,
-  BadgeComponent,
+  BadgeModule,
   BreadcrumbRouterComponent,
   ColorModeService,
   ContainerComponent,
   DropdownComponent,
-  DropdownDividerDirective,
   DropdownHeaderDirective,
   DropdownItemDirective,
   DropdownMenuDirective,
@@ -17,23 +16,26 @@ import {
   HeaderComponent,
   HeaderNavComponent,
   HeaderTogglerDirective,
-  NavItemComponent,
   NavLinkDirective,
   SidebarToggleDirective
 } from '@coreui/angular';
 
 import { IconDirective } from '@coreui/icons-angular';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 import { SnackBarService } from '../../../../core/services/snack-bar.service';
+import { Notification } from '../../../../share/dto/response/notification-response';
+import { ModalModule } from '@coreui/angular-pro';
 
 @Component({
-    selector: 'app-default-header',
-    templateUrl: './default-header.component.html',
-    standalone: true,
-  imports: [ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NavLinkDirective, RouterLink, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective]
+  selector: 'app-default-header',
+  templateUrl: './default-header.component.html',
+  standalone: true,
+  imports: [BadgeModule, CommonModule , ModalModule ,ContainerComponent, HeaderTogglerDirective, SidebarToggleDirective, IconDirective, HeaderNavComponent, NgTemplateOutlet, BreadcrumbRouterComponent, DropdownComponent, DropdownToggleDirective, AvatarComponent, DropdownMenuDirective, DropdownHeaderDirective, DropdownItemDirective]
 })
-export class DefaultHeaderComponent extends HeaderComponent {
-
+export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
+  @Output() openNotificationRequest = new EventEmitter<Notification>();
   readonly #colorModeService = inject(ColorModeService);
   readonly colorMode = this.#colorModeService.colorMode;
 
@@ -48,13 +50,26 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
+
+  // --- Notification State ---
+  notifications: WritableSignal<Notification[]> = signal([]);
+  unreadCount = computed(() => this.notifications().filter(n => !n.status).length);
+  isLoadingNotifications = signal(false);
+  private notificationSubscription: Subscription | undefined;
+  private markReadSubscription: Subscription | undefined;
+
   constructor(
     private router: Router,
     private authService: AuthService,
     private snackbarService: SnackBarService,
-
+    private notificationService: NotificationService,
   ) {
     super();
+  }
+
+  ngOnInit(): void {
+    this.loadNotifications();
+    // Potential TODO: Implement polling or WebSocket connection here for real-time updates
   }
 
   sidebarId = input('sidebar1');
@@ -134,7 +149,6 @@ export class DefaultHeaderComponent extends HeaderComponent {
     { id: 4, title: 'Angular Version', value: 100, color: 'success' }
   ];
 
-
   logout() {
     const userEmail = this.authService.getEmail();
 
@@ -160,4 +174,63 @@ export class DefaultHeaderComponent extends HeaderComponent {
         complete: () => { console.log('Logout observable completed.'); }
       });
   }
+
+  loadNotifications(): void {
+    this.isLoadingNotifications.set(true);
+    this.notificationSubscription = this.notificationService.getNotifications()
+      .subscribe({
+        next: (data) => {
+          console.log('Notifications received:', data);
+          // Sort by date descending (newest first)
+          const sortedData = data.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          this.notifications.set(sortedData);
+          this.isLoadingNotifications.set(false);
+        },
+        error: (err) => {
+          console.error('Error loading notifications:', err);
+          this.snackbarService.notifyError('Không thể tải thông báo.');
+          this.isLoadingNotifications.set(false);
+        }
+      });
+  }
+
+  openNotificationModal(notification: Notification, event: MouseEvent): void {
+    event.stopPropagation(); // Vẫn cần để ngăn dropdown đóng
+    console.log('Requesting to open modal for:', notification);
+
+    // Đánh dấu đã đọc (logic này vẫn có thể ở đây)
+    if (!notification.status) {
+      this.markAsRead(notification.id);
+    }
+
+    // **** Phát sự kiện yêu cầu mở modal lên parent ****
+    this.openNotificationRequest.emit(notification);
+  }
+  markAsRead(notificationId: number): void {
+    // Prevent multiple simultaneous markAsRead calls for the same ID if needed
+    if (this.markReadSubscription && !this.markReadSubscription.closed) {
+      // Optionally cancel previous request or just ignore the new one
+      console.log('Already marking a notification as read.');
+      // return;
+    }
+
+    this.markReadSubscription = this.notificationService.markAsRead(notificationId)
+      .subscribe({
+        next: () => {
+          console.log(`Notification ${notificationId} marked as read successfully.`);
+          // Update the local state immediately for better UX
+          this.notifications.update(currentNotifications => {
+            return currentNotifications.map(n =>
+              n.id === notificationId ? { ...n, status: true } : n
+            );
+          });
+          // The unreadCount computed signal will update automatically
+        },
+        error: (err) => {
+          console.error(`Error marking notification ${notificationId} as read:`, err);
+          this.snackbarService.notifyError('Lỗi khi đánh dấu thông báo đã đọc.');
+        }
+      });
+  }
 }
+

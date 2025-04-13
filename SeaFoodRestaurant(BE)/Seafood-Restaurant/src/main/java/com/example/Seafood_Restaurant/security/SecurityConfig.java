@@ -1,4 +1,5 @@
 package com.example.Seafood_Restaurant.security;
+import com.example.Seafood_Restaurant.utils.VariableUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,28 +33,58 @@ public class SecurityConfig  {
 
 //                        Dish
                         .requestMatchers("/dish/**")
-                            .hasAnyRole("Manager","Staff")
+                            .permitAll()
                         .requestMatchers("/images/**")
-                            .hasAnyRole("Manager", "Staff")
+                            .permitAll()
 
 //                        Table
                         .requestMatchers("/table/**")
-                            .hasAnyRole("Manager", "Staff")
+                            .hasAnyRole(VariableUtils.ROLE_MANAGER_STRING,VariableUtils.ROLE_STAFF_STRING)
+                        .requestMatchers("/table/*/off")
+                            .hasAnyRole(VariableUtils.ROLE_MANAGER_STRING,VariableUtils.ROLE_STAFF_STRING)
 
 //                        Payment
                         .requestMatchers("/payments/**")
-                            .hasAnyRole("Manager", "Staff")
+                            .hasAnyRole(VariableUtils.ROLE_MANAGER_STRING,VariableUtils.ROLE_STAFF_STRING)
 
 //                        OrderDetail
                         .requestMatchers("/order-detail/check/**")
-                            .hasAnyRole("Chef", "Staff")
-                        .requestMatchers("/order-detail/finished/**", "/order-detail/cooking/**", "/order-detail/ordered/**")
-                            .hasRole("Chef")
+                            .hasAnyRole(VariableUtils.ROLE_CHEF_STRING, VariableUtils.ROLE_STAFF_STRING)
+                        .requestMatchers("/order-detail/finished", "/order-detail/cooking/**", "/order-detail/ordered/**")
+                            .hasRole(VariableUtils.ROLE_CHEF_STRING)
                         .requestMatchers("/order-detail/cancelled/**")
-                            .hasRole("Staff")
+                            .hasRole(VariableUtils.ROLE_CHEF_STRING)
+
+//                        OrderSession
+                        .requestMatchers("/order-session/**")
+                            .permitAll()
+                        .requestMatchers("/order-session/filter/time/**")
+                            .permitAll()
+                        .requestMatchers("/order-session/filter/shift/**")
+                            .permitAll()
+                        .requestMatchers("/order-session/*/bill/base")
+                            .permitAll()
+                        .requestMatchers("/order-session/*/logs")
+                            .permitAll()
+                        .requestMatchers("/order-session/*/all-order")
+                            .permitAll()
+                        .requestMatchers("/order-session/exits-in-table/bill")
+                            .hasAnyRole(VariableUtils.ROLE_MANAGER_STRING, VariableUtils.ROLE_STAFF_STRING)
 
 
-                        // Any other request should be authenticated
+//                        Order
+                        .requestMatchers("/order/**")
+                            .hasAnyRole(VariableUtils.ROLE_MANAGER_STRING,VariableUtils.ROLE_STAFF_STRING)
+
+//                        Shift
+                        .requestMatchers("/secret-code/generate")
+                            .hasRole(VariableUtils.ROLE_MANAGER_STRING)
+                        .requestMatchers("/secret-code/validate")
+                            .hasAnyRole(VariableUtils.ROLE_STAFF_STRING,VariableUtils.ROLE_MANAGER_STRING)
+
+
+
+                                // Any other request should be authenticated
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);  // Add JWT filter before UsernamePasswordAuthenticationFilter

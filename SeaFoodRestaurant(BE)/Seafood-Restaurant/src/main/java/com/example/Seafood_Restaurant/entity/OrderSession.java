@@ -1,5 +1,6 @@
 package com.example.Seafood_Restaurant.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +8,9 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -22,29 +25,30 @@ public class OrderSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    // Inverse side of the OneToOne relationship with Order
-    // `mappedBy` indicates that the 'orderSession' field in the Order entity manages this relationship.
-    @OneToOne(mappedBy = "orderSession", fetch = FetchType.LAZY)
-    @JsonIgnore // To prevent recursion during serialization
-            Order order;
+    @OneToMany(mappedBy = "orderSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    List<Order> orders;
 
-    // Owning side: Many OrderSessions can belong to one Shift
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shift_id") // Foreign key column
+    @JsonBackReference
+    @JoinColumn(name = "shift_id")
             Shift shift;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
+    @JoinColumn(name = "table_id")
+    RestaurantTable table;
+
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    LocalDateTime createdAt; // Field name matches Lombok/Java convention
+    LocalDateTime createdAt;
 
-    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
-    BigDecimal totalPrice = BigDecimal.ZERO; // Default from SQL
-
-    @Column(name = "is_paid", nullable = false)
-    Boolean isPaid = false; // Default from SQL
+    @Column(name = "total_price", nullable = false)
+    BigInteger totalPrice = BigInteger.ZERO; // Default from SQL
 
     @Column(length = 255)
-    String status = "Pending"; // Default from SQL
+    String status = "Ordered";
 
     @Column(name = "payment_time")
     LocalDateTime paymentTime;

@@ -68,7 +68,7 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadNotifications();
+    // this.loadNotifications();
     // Potential TODO: Implement polling or WebSocket connection here for real-time updates
   }
 
@@ -233,4 +233,3 @@ export class DefaultHeaderComponent extends HeaderComponent implements OnInit {
       });
   }
 }
-

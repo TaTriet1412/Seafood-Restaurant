@@ -7,14 +7,13 @@
       </c-card-header>
       <c-card-body>
         <c-row>
-          <!-- Chọn kiểu lọc -->
           <c-col md="4">
             <label cLabel for="filterTypeSelect">Chọn kiểu lọc</label>
             <select
               id="filterTypeSelect"
               class="form-select"
               [(ngModel)]="selectedFilter"
-              (change)="onFilterTypeChange()"
+              (ngModelChange)="onFilterTypeChange()"
             >
               <option value="year">Lọc theo năm</option>
               <option value="month">Lọc theo tháng</option>
@@ -25,6 +24,7 @@
           <!-- Chọn giá trị -->
           <c-col md="4">
             <label cLabel for="dateValuePicker">Chọn {{ filterLabel }}</label>
+            <!-- Use locale from component, bind format -->
             <c-date-picker
               id="dateValuePicker"
               [selectionType]="selectedFilter"
@@ -36,15 +36,7 @@
               [(ngModel)]="selectedValue"
               (ngModelChange)="onDateChange($event)"
             ></c-date-picker>
-
-            <!-- Optional: Display selected value for debugging
-            <div *ngIf="selectedValue" class="mt-2">
-              Giá trị được chọn (Raw Date Object): {{ selectedValue | date:'medium' }} <br />
-            </div>
-             -->
           </c-col>
-
-
         </c-row>
       </c-card-body>
     </c-card>
@@ -54,85 +46,112 @@
         <strong> Danh sách phiếu tính tiền </strong>
       </c-card-header>
       <c-card-body>
-
-        <c-smart-table
-          #smartTable="cSmartTable"
-          [columnFilter]="true"
-          [columnSorter]="true"
-          [columns]="columns"
-          [itemsPerPageSelect]="true"
-          [itemsPerPage]="5"
-          [items]="filteredBillsData" 
-          [sorterValue]="{ column: 'created_at', state: 'desc' }" 
-          [tableBodyProps]="{ align: 'middle' }"
-          [tableFilter]="true"
-          [tableFootProps]="{ color: 'warning' }"
-          [tableHeadProps]="{ color: 'warning' }"
-          [tableProps]="{ hover: true, striped: true, responsive: true }"
-          cleaner
-          clickableRows
-          footer
-          header
-          pagination
-          [loading]="loadingData"
-        >
-          <ng-template cTemplateId="tableCustomHeader">
-            <div [cCol]="'auto'" class="p-0 ms-auto">
-              <button
-                (click)="smartTable.footer = !smartTable.footer"
-                cButton
-                [color]="smartTable.footer ? 'success' : 'danger'"
-              >
-                Chân Bảng : {{ smartTable.footer ? "Bật" : "Tắt" }}
-              </button>
-            </div>
-          </ng-template>
-          <ng-template
-            cTemplateId="tableData"
-            let-columnName="columnName"
-            let-item="item"
-            let-tdContent="tdContent"
+        @if (props$ | async; as props) {
+          <c-smart-table
+            #smartTable="cSmartTable"
+            [columnFilterValue]="props.columnFilterValue ?? {}"
+            [columnSorter]="{ external: true, resettable: true }"
+            [columns]="columns"
+            [itemsPerPageOptions]="[5, 10, 20]"
+            [itemsPerPageSelect]="true"
+            [itemsPerPage]="props.itemsPerPage"
+            [loading]="props.loadingData"
+            [items]="(orderSessionsData$ | async) ?? []"
+            [sorterValue]="props.sorterValue ?? {}"
+            (columnFilterValueChange)="handleColumnFilterValueChange($event)"
+            (itemsPerPageChange)="handleItemsPerPageChange($event)"
+            (sorterValueChange)="handleSorterValueChange($event)"
+            [tableBodyProps]="{ align: 'middle' }"
+            [tableFootProps]="{ color: 'warning' }"
+            [tableHeadProps]="{ color: 'warning' }"
+            [tableProps]="{ hover: true, striped: true, responsive: true }"
+            cleaner
+            clickableRows
+            footer
+            header
+            pagination
           >
-            <td
-              [cAlign]="
-                smartTable.getTableDataCellProps(item, columnName)['align']
-              "
-              [cTableActive]="
-                smartTable.getTableDataCellProps(item, columnName)['active']
-              "
-              [cTableColor]="
-                smartTable.getTableDataCellProps(item, columnName)['color']
-              "
-              [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
+            <!-- Optional: Custom header content remains the same -->
+            <ng-template cTemplateId="tableCustomHeader">
+              <div [cCol]="'auto'" class="p-0 ms-auto">
+                <button
+                  (click)="smartTable.footer = !smartTable.footer"
+                  cButton
+                  [color]="smartTable.footer ? 'success' : 'danger'"
+                >
+                  Chân Bảng : {{ smartTable.footer ? "Bật" : "Tắt" }}
+                </button>
+              </div>
+            </ng-template>
+
+            <!-- Custom cell rendering template remains the same -->
+            <ng-template
+              cTemplateId="tableData"
+              let-columnName="columnName"
+              let-item="item"
+              let-tdContent="tdContent"
             >
-              @switch (columnName) {
-                @case ('created_at') {
-                  <!-- Display Date/Time -->
-                  {{ tdContent | date:'HH:mm:ss dd/MM/yyyy'}}
+              <td
+                [cAlign]="smartTable.getTableDataCellProps(item, columnName)['align']"
+                [cTableActive]="smartTable.getTableDataCellProps(item, columnName)['active']"
+                [cTableColor]="smartTable.getTableDataCellProps(item, columnName)['color']"
+                [ngClass]="smartTable.getTableDataCellClass(item, columnName)"
+              >
+                @switch (columnName) {
+                  @case ('createdAt') {
+                    {{ tdContent | date : "HH:mm:ss dd/MM/yyyy" }}
+                  }
+                  @case ('paymentTime') {
+                    {{ tdContent | date : "HH:mm:ss dd/MM/yyyy" }}
+                  }
+                  @case ('totalPrice') {
+                    {{ tdContent | number : "1.0-0" }} VNĐ
+                  }
+                  @case ('status') {
+                    {{ translateStatusBill(tdContent) }}
+                  }
+                  @case ('detail') {
+                    <button
+                      cButton
+                      [color]="'primary'"
+                      size="sm"
+                      variant="outline"
+                      class="w-100"
+                      (click)="goToBillDetail(item)"
+                    >
+                      {{ "Xem" }}
+                    </button>
+                  }
+                  @default {
+                    {{ tdContent }}
+                  }
                 }
-                @case ('total') {
-                    <!-- Format Currency (example) -->
-                    {{ tdContent | number:'1.0-0' }} VND
-                }
-                @case ('detail') {
-                  <button
-                    cButton
-                    [color]="'primary'"
-                    size="sm"
-                    variant="outline"
-                    class="w-100"
-                    (click)="goToBillDetail(item)" 
-                  >
-                    {{'Xem'}}
-                  </button>
-                }
-                @default {
-                  {{ tdContent }}
-                }
-              }
-            </td>
-          </ng-template>
-        </c-smart-table>
+              </td>
+            </ng-template>
+          </c-smart-table>
+
+          <!-- Pagination: Bind pages and activePage -->
+          @if (props.totalPages && props.totalPages > 1) {
+            <c-smart-pagination
+              [activePage]="props.activePage"
+              (activePageChange)="handleActivePageChange($event)"
+              [pages]="props.totalPages"
+              class="mt-3"
+            />
+          }
+        }
+
+        <!-- Error Message Display -->
+        @if (errorMessage$ | async; as errorMessage) {
+          @if (errorMessage) { <!-- Check if error message is not empty -->
+            <hr>
+            <c-alert color="danger">{{ errorMessage }}</c-alert>
+            <!-- Optional: Add a retry button -->
+            <!--
+            <button cButton color="warning" (click)="retry$.next(true)">Thử lại</button>
+            -->
+          }
+        }
       </c-card-body>
     </c-card>
   </c-col>

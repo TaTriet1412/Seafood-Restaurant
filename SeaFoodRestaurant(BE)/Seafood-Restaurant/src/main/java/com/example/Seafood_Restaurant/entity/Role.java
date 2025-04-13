@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "role")
 @Getter
@@ -22,7 +24,7 @@ public class Role {
     @Column(unique = true)
     private String name;
 
-    @OneToOne(mappedBy = "role", fetch = FetchType.LAZY) // liên kết với Product, để bi-directional relationship
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private User user;
+    List<User> users;
 }

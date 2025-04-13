@@ -24,5 +24,4 @@ public class Shift {
 
     @Column(name = "time_end", nullable = false)
     LocalDateTime timeEnd;
-
 }

@@ -13,7 +13,7 @@
     </button>
 
     <!-- Notification Bell Dropdown -->
-    <c-header-nav class="d-none d-md-flex ms-auto">
+    <c-header-nav *ngIf="false" class="d-none d-md-flex ms-auto">
       <!-- Adjusted position if needed -->
       <c-dropdown
         alignment="end"
@@ -115,15 +115,15 @@
           <!-- Optional: Link to see all notifications -->
           <!-- <li><hr cDropdownDivider /></li> -->
           <!-- <li>
-           <a cDropdownItem routerLink="/notifications" class="text-center"> 
-             Xem tất cả thông báo
-           </a>
-         </li> -->
+             <a cDropdownItem routerLink="/notifications" class="text-center"> 
+               Xem tất cả thông báo
+             </a>
+           </li> -->
         </ul>
       </c-dropdown>
     </c-header-nav>
 
-    <c-header-nav class="ms-auto ms-md-0">
+    <c-header-nav class="ms-auto ">
       <div class="nav-item py-1">
         <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
       </div>

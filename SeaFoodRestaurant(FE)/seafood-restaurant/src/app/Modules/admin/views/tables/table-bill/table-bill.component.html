@@ -1,8 +1,9 @@
 <c-row ngPreserveWhitespaces>
   <c-col xs="12">
     <c-card class="mb-4">
-      <c-card-header>
-        <strong>Hóa đơn</strong>
+      <c-card-header class="d-flex justify-content-between align-items-center">
+        <strong>Hóa đơn (Món ăn)</strong>
+        <span class="badge bg-warning text-dark fs-6">Bàn: {{ currTableId }}</span>
         <!-- Đổi tiêu đề -->
       </c-card-header>
       <c-card-body>
@@ -14,15 +15,17 @@
               <th>Số lượng</th>
               <th>Đơn giá</th>
               <th>Thành tiền</th>
+              <th>Trạng thái</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let bill of bills">
-              <th scope="row">{{ bill.id }}</th>
-              <td>{{ bill.name }}</td>
-              <td>{{ bill.quantity }}</td>
-              <td>{{ bill.price | number }} VNĐ</td>
-              <td>{{ bill.total }} VNĐ</td>
+            <tr *ngFor="let order of ordersData; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ order.dishName }}</td>
+              <td>{{ order.quantity }}</td>
+              <td>{{ order.price | number }} VNĐ</td>
+              <td>{{ order.total }} VNĐ</td>
+              <td>{{ translateStatus(order.status) }}</td>
             </tr>
           </tbody>
         </table>
@@ -48,12 +51,12 @@
           class="align-items-center justify-content-between flex-column flex-md-row"
         >
           <!-- Phần ghi chú -->
-          <c-col md="5" class="mb-3">
+          <!-- <c-col md="5" class="mb-3">
             <c-input-group >
               <span cInputGroupText>Ghi chú</span>
               <textarea aria-label="With textarea" cFormControl></textarea>
             </c-input-group>
-          </c-col>
+          </c-col> -->
 
           <!-- Thành tiền với icon -->
           <c-col md="auto" class="text-end mb-3">
@@ -70,7 +73,7 @@
           <c-col md="auto" class="mb-3">
             <button
               (click)="submitRecharge()"
-              [disabled]="isPaid"
+              [disabled]="isPaid || orderSessionStatus != 'Ready To Pay'"
               class="btn btn-primary payment-btn m-auto mb-2"
             >
               <div class="payment_logo">

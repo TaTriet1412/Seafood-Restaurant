@@ -3,7 +3,7 @@ package com.example.Seafood_Restaurant.utils;
 public enum OrderDetailStatus {
     ORDERED("Ordered"),   // Đã gửi đến bếp
     COOKING("Cooking"), // Bếp đang chuẩn bị
-    CANCELLED("Cancelled"), // Đã hủy
+//    CANCELLED("Cancelled"), // Đã hủy
     FINISHED("Finished"),   // Đã hoàn thành
     ;
 

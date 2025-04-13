@@ -35,7 +35,13 @@ import { NumberFormatService } from '../../../../../core/services/numberFormat.s
 import { SnackBarService } from '../../../../../core/services/snack-bar.service';
 
 
-import { Order } from '../../../../../share/dto/order';
+import { Order } from '../../../../../share/dto/response/order';
+import { firstValueFrom } from 'rxjs';
+import { OrderSessionService } from '../../../../../core/services/order-session.service';
+import { ActivatedRoute } from '@angular/router';
+import { TableService } from '../../../../../core/services/table.service';
+import { OrderDetailService } from '../../../../../core/services/order-detail.service';
+import { OrderNote } from '../../../../../share/dto/response/order-note.response';
 
 @Component({
   selector: 'app-order-details',
@@ -66,18 +72,18 @@ import { Order } from '../../../../../share/dto/order';
 
 export class OrderDetailsComponent implements OnInit {
   originOrderData: any;
-  ordersDetailData: IItem[] = [];
   loadedData = false;
+  orderSessionStatus = "";
+  currOrderSessionId: number = -1;
+
+  tableId: number = -1;
+  ordersData: IItem[] = [];
+  notes: { text: string; createdAt: Date }[] = [];
+  showAllNotes: boolean = false;
 
   columns: (IColumn | string)[] = [
     {
-      key: 'id',
-      label: 'Mã đơn hàng',
-      _style: { width: '20%' },
-      _props: { class: 'fw-bold' }
-    },
-    {
-      key: 'name',
+      key: 'dishName',
       label: 'Tên món',
       _style: { width: '20%' },
       _props: { class: 'fw-bold' }
@@ -89,19 +95,14 @@ export class OrderDetailsComponent implements OnInit {
     },
     {
       key: 'status',
-      _style: { width: '25%' },
+      _style: { width: '22%' },
       label: 'Trạng thái'
     },
     {
       key: 'accept',
-      label: '',
-      _style: { width: '10%' },
-      sorter: false
-    },
-    {
-      key: 'reject',
-      label: '',
-      _style: { width: '10%' },
+      _style: { width: '22%' },
+      label: 'Hành động',
+      filter: false,
       sorter: false
     }
   ];
@@ -109,108 +110,105 @@ export class OrderDetailsComponent implements OnInit {
   constructor(
     private numberFormatService: NumberFormatService,
     private cdf: ChangeDetectorRef,
+    private orderSessionService: OrderSessionService,
+    private orderDetailService: OrderDetailService,
     private snackbarService: SnackBarService,
+    private url: ActivatedRoute,
+    private tableService: TableService,
+
   ) { }
 
-  ngOnInit(): void {
-    this.loadDataOrder()
+  async ngOnInit(): Promise<void> {
+    this.currOrderSessionId = Number(this.url.snapshot.paramMap.get('id'));
+    await this.loadDataOrder()
+
     this.loadedData = true
   }
 
-  loadDataOrder() {
-    this.originOrderData = {
-      id: 1,
-      orders: [
-        {
-          id: 1,
-          orderDetail: [
-            {
-              id: 1,
-              name: 'Phở',
-              quantity: 2,
-              price: 50000,
-              total: this.numberFormatService.formatNumber(100000),
-              status: 'Pending',
-              _props: { color: 'warning', align: 'middle' }
-            },
-            {
-              id: 2,
-              name: 'Cơm gà',
-              quantity: 1,
-              price: 40000,
-              total: this.numberFormatService.formatNumber(40000),
-              status: 'Pending',
-              _props: { color: 'warning', align: 'middle' }
-            },
-          ]
-        },
-        {
-          id: 2,
-          orderDetail: [
-            {
-              id: 3,
-              name: 'Trà đá',
-              quantity: 3,
-              price: 10000,
-              total: this.numberFormatService.formatNumber(30000),
-              status: 'Active',
-              _props: { color: 'success', align: 'middle' }
-            }
-          ]
-        }
-      ]
-    }
+  async loadDataOrder() {
+    const fetchedOrdersData = await firstValueFrom(this.orderSessionService.getOrdersByOrderSessionId(this.currOrderSessionId));
+    this.orderSessionStatus = fetchedOrdersData.status
+    this.tableId = fetchedOrdersData.tableId
 
-    this.ordersDetailData = this.originOrderData.orders.flatMap((order: Order) =>
-      order.orderDetail.map((item) => ({
+    this.ordersData = fetchedOrdersData?.orderDetails?.map((item: any) => {
+      const total = this.numberFormatService.formatNumber(item.price * item.quantity);
+
+      // Gán màu theo status
+      let color = 'secondary';
+      switch (item.status) {
+        case 'Ordered':
+          color = 'info';
+          break;
+        case 'Cooking':
+          color = 'warning';
+          break;
+        case 'Finished':
+          color = 'success';
+          break;
+      }
+
+      return {
         ...item,
-        orderId: order.id
-      }))
-    );
+        _props: {
+          align: 'middle',
+          color,
+        }
+      };
+    }) || [];
+
+    const fetchedOrderNotesData = await firstValueFrom(this.orderSessionService.getOrderNotesByOrderSessionId(this.currOrderSessionId));
+    this.notes = fetchedOrderNotesData.map((item: OrderNote) => ({
+      text: item.note,
+      createdAt: new Date(item.createdAt),
+    }));
   }
 
 
-  translateStatus(status: String) {
-    switch (status) {
-      case 'Active':
-        return 'Đã nấu xong';
-      case 'Pending':
-        return 'Đang nấu';
-      case 'Inactive':
-        return 'Chưa gửi yêu cầu';
-      case 'Banned':
-        return 'Hủy món';
-      default:
-        return 'Đã gửi yêu cầu';
-    }
-  }
 
   getBadge(status: string) {
     switch (status) {
-      case 'Active':
+      case 'Finished':
         return 'success'; //Đã nấu
-      case 'Inactive':
-        return 'secondary'; // Chưa gửi thông báo
-      case 'Pending':
-        return 'warning'; // Đang nấu
-      case 'Banned':
-        return 'danger'; // Hủy mónmón
-      default:
+      case 'Ordered':
         return 'primary'; // Đã gửi thông báo
+      case 'Cooking':
+        return 'warning'; // Đang nấu
+      default:
+        return 'secondary'; // Chưa gửi thông báo
+    }
+  }
+
+  translateStatus(status: String) {
+    switch (status) {
+      case 'Finished':
+        return 'Đã nấu xong';
+      case 'Cooking':
+        return 'Đang nấu';
+      case 'Ordered':
+        return 'Đã gửi yêu cầu';
+      default:
+        return 'Chưa gửi yêu cầu';
     }
   }
 
   isBlockBtnState(orderDetailId: number): boolean {
-    const orderDetail = this.ordersDetailData.find(order => order['id'] === orderDetailId);
-    return orderDetail ? orderDetail['status'] === 'Active' || orderDetail['status'] === 'Banned' : false;
+    const orderDetail = this.ordersData.find(order => order['id'] === orderDetailId);
+    return orderDetail ? orderDetail['status'] === 'Finished' || orderDetail['status'] === 'Banned' : false;
   }
 
-  onAccepted() {
-    // TODO: thay đổi mảng originOrderData sau khi hòan thành món
+  async onAccepted(id: number) {
+    this.loadedData = false;
+    const data = await firstValueFrom(this.orderDetailService.updateOrderDetail(id));
+    await this.loadDataOrder()
+    this.loadedData = true;
+
   }
 
-  onRejected() {
-    // TODO: thay đổi mảng originOrderData sau khi hủy món
+  get sortedNotes() {
+    return this.notes.sort((a, b) => b.createdAt.getTime() -a.createdAt.getTime());
   }
-  
+
+  toggleShowAllNotes(): void {
+    this.showAllNotes = !this.showAllNotes;
+  }
 }

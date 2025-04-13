@@ -1,8 +1,9 @@
 <c-row ngPreserveWhitespaces>
   <c-col xs="12">
     <c-card class="mb-4">
-      <c-card-header>
+      <c-card-header class="d-flex justify-content-between align-items-center">
         <strong>Thêm món</strong>
+        <span class="badge bg-warning text-dark fs-6">Bàn: {{ currTableId }}</span>
       </c-card-header>
       <c-card-body>
         <form
@@ -28,8 +29,8 @@
             >
               <option value="" disabled selected>Chọn phân loại</option>
               <option
-                *ngFor="let category of menuCategories"
-                [value]="category.value"
+                *ngFor="let category of categoryList"
+                [value]="category.name"
               >
                 {{ category.name }}
               </option>
@@ -57,7 +58,7 @@
               [class.is-invalid]="validated && dish.invalid"
             >
               <option value="" disabled selected>Chọn món ăn</option>
-              <option *ngFor="let dish of filteredDishes" [value]="dish.value">
+              <option *ngFor="let dish of filteredDishes" [value]="dish.name">
                 {{ dish.name }}
               </option>
             </select>
@@ -122,7 +123,7 @@
           [columns]="columns"
           [itemsPerPageSelect]="true"
           [itemsPerPage]="5"
-          [items]="ordersData"
+          [items]="ordersData.slice().reverse()"
           [sorterValue]="{ column: 'name', state: 'asc' }"
           [tableBodyProps]="{ align: 'middle' }"
           [tableFilter]="true"
@@ -158,12 +159,14 @@
 
           <ng-template cTemplateId="tableCustomHeader">
             <div [cCol]="'auto'" class="p-0 ms-auto">
+              <!-- (click)="onKitchenNotification()" -->
               <button
-                (click)="onKitchenNotification()"
+                [cModalToggle]="staticBackdropModal.id"
                 cButton
                 [color]="isNotifyKitchen ? 'secondary' : 'primary'"
                 class="me-2"
                 [disabled]="isNotifyKitchen"
+                cButton
               >
                 <i class="fas fa-bullhorn me-1"></i> Thông báo bếp
               </button>
@@ -277,11 +280,12 @@
               <button
                 (click)="toggleDetails(item.id)"
                 cButton
-                color="primary"
+                [color]="item.status == 'Inactive' ? 'primary' : 'secondary'"
                 size="sm"
                 variant="outline"
+                [disabled]="item.status != 'Inactive'"
               >
-                Show
+                Chỉnh sửa
               </button>
               } @default {
               {{ tdContent }}
@@ -304,7 +308,11 @@
         >
           <!-- Nút Thanh toán -->
           <c-col md="auto">
-            <button (click)="goToTableBill()" class="btn btn-primary payment-btn m-auto mb-2">
+            <button
+              (click)="goToTableBill()"
+              class="btn btn-primary payment-btn m-auto mb-2"
+              [disabled]="orderSessionStatus!='Ready To Pay'"
+            >
               <i class="fa-solid fa-credit-card"></i> Thanh toán ngay
             </button>
           </c-col>
@@ -324,3 +332,31 @@
     </c-card>
   </c-col>
 </c-row>
+
+
+<!-- Modal -->
+<c-modal #staticBackdropModal backdrop="static" id="staticBackdropModal">
+  <c-modal-header>
+    <h5 cModalTitle>Ghi chú thực đơn</h5>
+    <button
+      [cModalToggle]="staticBackdropModal.id"
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+    ></button>
+  </c-modal-header>
+  <c-modal-body>
+    <c-input-group>
+      <span cInputGroupText>Ghi chú</span>
+      <textarea aria-label="With textarea" cFormControl [(ngModel)]="noteCreateOrder"></textarea>
+    </c-input-group>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="staticBackdropModal.id" cButton color="secondary">
+      Đóng
+    </button>
+    <button cButton color="primary" (click)="onKitchenNotification()">
+      Thông báo bếp
+    </button>
+  </c-modal-footer>
+</c-modal>

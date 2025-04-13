@@ -25,8 +25,12 @@ public class DishController {
     }
 
     @GetMapping("/category/{catId}")
-    public ResponseEntity<List<Dish>> getDishesByCategoryId(@PathVariable Long catId) {
-        return new ResponseEntity<>(dishService.getDishesByCategoryId(catId),HttpStatus.OK);
+    public ResponseEntity<List<Dish>> getDishesByCategoryId(
+            @PathVariable Long catId,
+            @RequestParam(value = "able", required = false) Boolean able
+    ) {
+        List<Dish> dishes = dishService.getDishesByCategoryIdAndAble(catId, able);
+        return ResponseEntity.ok(dishes);
     }
 
     @PutMapping("/able")

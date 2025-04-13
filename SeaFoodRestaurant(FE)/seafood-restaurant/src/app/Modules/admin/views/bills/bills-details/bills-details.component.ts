@@ -15,11 +15,15 @@ import {
 } from '@coreui/angular'; // Correct CoreUI imports
 import { NumberFormatService } from '../../../../../core/services/numberFormat.service'; // Assuming path is correct
 import { FormsModule } from '@angular/forms';
+import { OrderSessionService } from '../../../../../core/services/order-session.service';
+import { firstValueFrom, timestamp } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { Order } from '../../../../../share/dto/response/order';
 
 // Define interfaces for better type safety (optional but recommended)
 interface BillItem {
   id: number;
-  name: string;
+  dishName: string;
   quantity: number;
   price: number; // Store raw number
 }
@@ -28,16 +32,16 @@ interface BillLog {
   id: number;
   timestamp: Date; // Use Date object
   action: string;
-  user: string;
 }
 
 interface BillDetailsInfo {
-    id: number;
-    tableName: string;
-    staffName: string;
-    createdAt: Date;
-    totalAmount: number; // Store raw total amount if available from backend
-    note?: string; // Optional note
+  id: number;
+  tableId: number;
+  createdAt: Date;
+  paymentTime: Date;
+  totalPrice: number; // Store raw total amount if available from backend
+  note?: string; // Optional note
+  status: string;
 }
 
 @Component({
@@ -63,9 +67,8 @@ interface BillDetailsInfo {
   styleUrls: ['./bills-details.component.scss'] // Use styleUrls (plural)
 })
 export class BillsDetailsComponent implements OnInit {
+  billId: number = -1; // Example Input
 
-  // Assume billId is passed in via input or route parameter
-  @Input() billId: number | null = 123; // Example Input
 
   billDetails: BillDetailsInfo | null = null; // To store main bill info
   billItems: BillItem[] = []; // Use the interface
@@ -77,55 +80,57 @@ export class BillsDetailsComponent implements OnInit {
   currentNote: string = ''; // Model for the note input
 
   constructor(
+    private url: ActivatedRoute,
+    private orderSessionService: OrderSessionService,
     private numberFormatService: NumberFormatService, // Keep if custom formatting is needed beyond pipes
     private datePipe: DatePipe // Inject DatePipe for formatting if needed in logic (template preferred)
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.billId = Number(this.url.snapshot.paramMap.get('id'));
     this.loadBillData(); // Load data when component initializes
   }
 
-  loadBillData(): void {
+  async loadBillData(): Promise<void> {
     // --- MOCK DATA ---
     // In a real app, fetch this data based on this.billId from a service
+    const fetchedBillBase = await firstValueFrom(this.orderSessionService.getBillBase(this.billId))
+    console.log(fetchedBillBase)
+
     this.billDetails = {
-        id: this.billId ?? 0,
-        tableName: 'Bàn 5 VIP',
-        staffName: 'Nguyễn Văn A',
-        createdAt: new Date(2024, 6, 20, 10, 30, 0), // Example date (Month is 0-indexed)
-        totalAmount: 170000, // Example total (can be recalculated too)
-        note: 'Ít cay, thêm rau thơm'
+      id: this.billId ?? 0,
+      tableId: fetchedBillBase.tableId,
+      createdAt: new Date(fetchedBillBase.createdAt), // Example date (Month is 0-indexed)
+      paymentTime: new Date(fetchedBillBase.paymentTime), // Example date (Month is 0-indexed)
+      totalPrice: fetchedBillBase.totalPrice, // Example total (can be recalculated too)
+      status: fetchedBillBase.status
     };
     this.currentNote = this.billDetails?.note ?? ''; // Initialize note input
 
-    this.billItems = [
-      { id: 1, name: 'Phở Bò Tái Chín', quantity: 2, price: 50000 }, // Use raw numbers
-      { id: 2, name: 'Nem Chua Rán', quantity: 1, price: 40000 },
-      { id: 3, name: 'Trà Chanh', quantity: 3, price: 10000 },
-    ];
+    const fetchedBillDetail = await firstValueFrom(this.orderSessionService.getOrdersByOrderSessionId(this.billId))
 
-    this.billLogs = [
-      { id: 1, timestamp: new Date(2024, 6, 20, 10, 30, 5), action: 'Tạo hóa đơn', user: 'Nguyễn Văn A' },
-      { id: 2, timestamp: new Date(2024, 6, 20, 10, 32, 15), action: 'Thêm món: Phở Bò Tái Chín (x2)', user: 'Nguyễn Văn A' },
-      { id: 3, timestamp: new Date(2024, 6, 20, 10, 33, 0), action: 'Thêm món: Nem Chua Rán (x1)', user: 'Nguyễn Văn A' },
-      { id: 4, timestamp: new Date(2024, 6, 20, 10, 35, 40), action: 'Thêm món: Trà Chanh (x3)', user: 'Nguyễn Văn A' },
-      { id: 5, timestamp: new Date(2024, 6, 20, 10, 40, 10), action: 'Cập nhật ghi chú', user: 'Nguyễn Văn A' },
-      { id: 6, timestamp: new Date(2024, 6, 20, 10, 55, 20), action: 'Yêu cầu thanh toán', user: 'Nguyễn Văn A' },
-      { id: 7, timestamp: new Date(2024, 6, 20, 11, 0, 5), action: 'Xác nhận thanh toán', user: 'Thu Ngân B' },
-      { id: 8, timestamp: new Date(2024, 6, 20, 11, 0, 10), action: 'Đóng hóa đơn', user: 'Thu Ngân B' },
-    ].sort((a,b) => b.timestamp.getTime() - a.timestamp.getTime()); // Sort logs newest first
+    this.billItems = fetchedBillDetail.orderDetails.map((detail, index) => ({
+      id: index + 1, // hoặc dùng detail.id nếu muốn giữ nguyên
+      dishName: detail.dishName,
+      quantity: detail.quantity,
+      price: detail.price,
+    }));
+
+    const fetchedBillLogs = await firstValueFrom(this.orderSessionService.getListLogOfBill(this.billId))
+    console.log(fetchedBillLogs)
+
+    this.billLogs = fetchedBillLogs
+      .map((item, index) => ({
+        id: index + 1,
+        action: item.message,
+        timestamp: new Date(item.createdAt)
+      }))
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
     // --- END MOCK DATA ---
-
     this.updateDisplayedLogs(); // Initialize the displayed logs
   }
 
-  // Calculate total price from items
-  calculateTotalItemPrice(): number {
-    return this.billItems.reduce(
-      (total, item) => total + item.price * item.quantity, 0
-    );
-  }
 
   // Toggle log visibility
   toggleShowLogs(): void {
@@ -152,5 +157,20 @@ export class BillsDetailsComponent implements OnInit {
     console.log('Xác nhận thanh toán clicked!');
     console.log('Ghi chú:', this.currentNote);
     // Add payment processing logic here (e.g., call API)
+  }
+
+  translateStatusBill(status: string) {
+    switch (status) {
+      case "Ordered":
+        return "Gửi yêu cầu cho bếp"
+      case "In Progress":
+        return "Đang nấu"
+      case "Ready To Pay":
+        return "Sẵn sàng thanh toán"
+      case "Completed":
+        return "Hoàn thành"
+      default:
+        return "Lỗi"
+    }
   }
 }
