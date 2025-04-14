@@ -157,10 +157,12 @@ export class OrderDetailsComponent implements OnInit {
     }) || [];
 
     const fetchedOrderNotesData = await firstValueFrom(this.orderSessionService.getOrderNotesByOrderSessionId(this.currOrderSessionId));
-    this.notes = fetchedOrderNotesData.map((item: OrderNote) => ({
-      text: item.note,
-      createdAt: new Date(item.createdAt),
-    }));
+    this.notes = fetchedOrderNotesData
+      .filter((item: OrderNote) => item.note && item.note.trim() !== '') // Lọc bỏ các note null hoặc blank
+      .map((item: OrderNote) => ({
+        text: item.note,
+        createdAt: new Date(item.createdAt),
+      }));
   }
 
 
@@ -205,7 +207,7 @@ export class OrderDetailsComponent implements OnInit {
   }
 
   get sortedNotes() {
-    return this.notes.sort((a, b) => b.createdAt.getTime() -a.createdAt.getTime());
+    return this.notes.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
   toggleShowAllNotes(): void {
