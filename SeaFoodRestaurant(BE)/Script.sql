@@ -63,7 +63,6 @@ CREATE TABLE `order_session` (
     `shift_id` BIGINT,
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `total_price` BIGINT NOT NULL DEFAULT 0 CHECK (`total_price` >= 0), -- Uses BIGINT
-    -- `is_paid` BIT NOT NULL DEFAULT 0, -- REMOVED
     `status` VARCHAR(50) DEFAULT 'Ordered', -- 'Ordered', 'In Progress', 'Ready To Pay', 'Completed'
     `payment_time` DATETIME NULL DEFAULT NULL, -- Payment time implies paid status
     `table_id` BIGINT NOT NULL,

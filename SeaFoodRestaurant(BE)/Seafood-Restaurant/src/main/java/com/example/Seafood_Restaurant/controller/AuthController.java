@@ -12,12 +12,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/auth")
+@Validated
 public class AuthController {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -41,9 +43,8 @@ public class AuthController {
 
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody LogoutRequest logoutDTO) {
+    public ResponseEntity<?> logout(@Valid @RequestBody LogoutRequest logoutDTO) {
         authService.logout(logoutDTO.getEmail());
         return ResponseEntity.ok(gson.toJson("Đăng xuất thành công"));
     }
-
 }

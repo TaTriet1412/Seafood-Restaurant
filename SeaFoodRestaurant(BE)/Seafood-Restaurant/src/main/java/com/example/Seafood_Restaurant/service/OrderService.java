@@ -41,14 +41,19 @@ public class OrderService {
 
     @Transactional(rollbackOn = Exception.class)
     public DetailOrderSessionRes handleNewOrder(CreateOrder req) {
-        new OrderSession();
         boolean isNewCreated = false;
+
         OrderSession orderSession;
             if(req.orderSessionId() == -1) {
                 orderSession = orderSessionService.createNewOrderSession(req.tableId());
                 isNewCreated = true;
             }else {
                 orderSession = orderSessionService.getOrderSessionById(req.orderSessionId());
+//                Kiểm tra tableId của orderSession có đúng không
+                if(!orderSession.getTable().getId().equals(req.tableId())) {
+                    throw new SimpleHttpException(HttpStatus.BAD_REQUEST,"Dữ liệu tableId và orderSessionId không khớp");
+                }
+
                 orderSession.setShift(shiftService.getCurrentShift());
             }
 
@@ -63,7 +68,7 @@ public class OrderService {
 
             for (DetailOrderRequest detailItem : req.items()) {
                 Dish dish = dishService.getDishById(detailItem.dishId());
-                if(!dish.getAble()) throw new SimpleHttpException(HttpStatus.BAD_REQUEST, "Món ăn " + dish.getName() + " đã tắt"+". Vui lòng chọn món khác");
+                if(!dish.getAble()) throw new SimpleHttpException(HttpStatus.BAD_REQUEST, "Món ăn " + dish.getName() + " (id = " + dish.getId() + ") đã tắt"+". Vui lòng chọn món khác");
                 OrderDetail orderDetail = OrderDetail.builder()
                         .order(order)
                         .dish(dish)

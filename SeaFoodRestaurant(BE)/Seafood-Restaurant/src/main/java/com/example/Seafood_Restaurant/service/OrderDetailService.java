@@ -31,7 +31,7 @@ public class OrderDetailService {
 
     @Transactional
     public void updateOrderDetailStatus(Long id, OrderDetailStatus status) {
-        OrderDetail orderDetail = orderDetailRepository.findById(id).orElseThrow(() -> new RuntimeException("Order detail not found"));
+        OrderDetail orderDetail = orderDetailRepository.findById(id).orElseThrow(() -> new RuntimeException("Không tìm thấy chi tiết hóa đơn id = " + id));
 
         // Nếu đã hoàn thành hoặc hủy thì không cho phép cập nhật lại
         if (orderDetail.getStatus().equals(OrderDetailStatus.FINISHED.getValue()) ) {

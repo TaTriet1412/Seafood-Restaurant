@@ -2,6 +2,7 @@ package com.example.Seafood_Restaurant.controller;
 
 import com.example.Seafood_Restaurant.utils.VariableUtils;
 import com.google.gson.Gson;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,12 +23,13 @@ import java.util.Base64;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/images")
+@Validated
 public class ImagesController {
-
     private final Gson gson;
 
     @GetMapping()
-    public ResponseEntity<Resource> getImage(@RequestParam String path) throws IOException {
+    public ResponseEntity<Resource> getImage(@NotNull(message = "path không được để trống")
+                                                 @RequestParam String path) throws IOException {
         Path uploadDir = Paths.get(VariableUtils.UPLOAD_DIR_ROOT + "/");
         Path filePath = Paths.get(uploadDir.toString(), path);
         System.out.println(filePath);
@@ -41,7 +44,7 @@ public class ImagesController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + path + "\"")
                     .body(resource);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -68,5 +71,4 @@ public class ImagesController {
                     .body(gson.toJson("Không tìm thấy tệp hoặc không thể đọc tệp"));
         }
     }
-
 }
