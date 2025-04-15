@@ -245,7 +245,6 @@ public class OrderSessionService {
     public List<Order> getAllOrderByOrderSessionId(Long id) {
         OrderSession orderSession = getOrderSessionById(id);
         return orderSession.getOrders().stream()
-                .filter(order -> order.getNote() != null)
                 .sorted((o1, o2) -> o2.getCreatedAt().compareTo(o1.getCreatedAt()))
                 .collect(Collectors.toList());
     }

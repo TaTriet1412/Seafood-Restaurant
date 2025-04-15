@@ -53,6 +53,9 @@ public class OrderService {
                 if(!orderSession.getTable().getId().equals(req.tableId())) {
                     throw new SimpleHttpException(HttpStatus.BAD_REQUEST,"Dữ liệu tableId và orderSessionId không khớp");
                 }
+                if(orderSession.getStatus().equals("Finished")) {
+                    throw new SimpleHttpException(HttpStatus.BAD_REQUEST,"Không thể thêm món khi đơn đã thanh toán");
+                }
 
                 orderSession.setShift(shiftService.getCurrentShift());
             }

@@ -36,5 +36,4 @@ public class TableController {
         tableService.offTable(id);
         return ResponseEntity.ok(gson.toJson("Đóng bàn thành công"));
     }
-
 }

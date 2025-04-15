@@ -37,7 +37,7 @@ public class SecurityConfig  {
                         .requestMatchers("/dish/category/**")
                             .permitAll()
                         .requestMatchers("/dish/able")
-                                .hasRole(VariableUtils.ROLE_MANAGER_STRING)
+                                .hasRole(VariableUtils.ROLE_CHEF_STRING)
                         .requestMatchers("/images/**")
                             .permitAll()
 
