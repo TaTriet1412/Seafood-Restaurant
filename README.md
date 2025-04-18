@@ -162,6 +162,7 @@ peaceful_land/<br>
     - `-d`: Chạy container ở chế độ ngầm (detached).
     - Cấu hình container cho Redis bên dưới cùng gần tương tự.
 - Kiểm tra xem container MySQL đã chạy thành công, sử dụng lệnh: `docker ps`
+- Database: nằm trong file Script.sql ở thư mục Seafood_Restaurant(BE)
 
 2. Redis (CSDL phân tán phục vụ cho chức năng ghi lại mã OTP)
 - Mở terminal hoặc command prompt và chạy lệnh sau để kéo hình ảnh Redis từ Docker Hub: `docker pull redis:latest`
