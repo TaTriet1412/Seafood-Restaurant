@@ -1,4 +1,4 @@
-Đường dẫn đến dự án: 
+Đường dẫn đến dự án: https://github.com/TaTriet1412/Seafood-Restaurant
 
 # Dự Án Phát Triển Phần Mềm Seafood-Restaurant
 
