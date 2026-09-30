@@ -1,0 +1,44 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/java
+{
+	"name": "Seafood Restaurant",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspace/Seafood-Restaurant",
+	"shutdownAction": "stopCompose",
+
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "none",
+			"installMaven": "true",
+			"installGradle": "false"
+		},
+		"ghcr.io/postfinance/devcontainer-features/node:1": {
+			"version": "20.11.1",
+			"npmVersion": "included",
+			"yarnVersion": "none",
+			"pnpmVersion": "none",
+			"corepackVersion": "none"
+		}
+	},
+
+	"forwardPorts": [4200, 8080],
+	"postCreateCommand": "cd 'SeaFoodRestaurant(FE)/seafood-restaurant' && npm install",
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "java -version",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+			"vscjava.vscode-java-pack",
+			"angular.ng-template",
+			"ms-azuretools.vscode-docker"
+			]
+		}
+	}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers/non-root.
+	// "remoteUser": "root"
+}

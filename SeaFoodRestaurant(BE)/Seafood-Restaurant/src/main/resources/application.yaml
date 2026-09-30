@@ -5,7 +5,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/seafood_restaurant
+    url: jdbc:mysql://mysql:3306/seafood_restaurant
     username: root
     password: root
 
@@ -16,7 +16,7 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: redis
       port: 6379
       password:
       timeout: 60000

@@ -32,7 +32,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<Object> handleUncaughtRuntime(RuntimeException ex) {
-        ApiError apiError = new ApiError(HttpStatus.NOT_FOUNDg);
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
         apiError.setMessage(ex.getMessage());
         ex.printStackTrace(); // Log chi tiết, hoặc dùng logger
         return buildResponseEntity(apiError);
