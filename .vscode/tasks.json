@@ -2,21 +2,22 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "frontend: start",
+      "label": "Start Angular FE",
       "type": "shell",
-      "command": "npm",
-      "args": ["run", "start"],
+      "command": "npx ng serve --host 0.0.0.0",
       "options": {
         "cwd": "${workspaceFolder}/SeaFoodRestaurant(FE)/seafood-restaurant"
       },
       "isBackground": true,
       "problemMatcher": {
-        "owner": "typescript",
-        "pattern": "$tsc",
+        "owner": "custom",
+        "pattern": {
+          "regexp": "^$"
+        },
         "background": {
           "activeOnStart": true,
-          "beginsPattern": { "regexp": "Building..." },
-          "endsPattern": { "regexp": "(Local|Application bundle generation complete)" }
+          "beginsPattern": "Building|Generating browser application bundles",
+          "endsPattern": "Compiled successfully|Application bundle generation complete|View your application at"
         }
       }
     }

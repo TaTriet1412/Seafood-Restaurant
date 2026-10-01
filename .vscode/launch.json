@@ -1,31 +1,27 @@
 {
   "version": "0.2.0",
   "configurations": [
-    
     {
-      "name": "Frontend: Chrome",
-      "type": "pwa-chrome",
-      "request": "launch",
-      "preLaunchTask": "frontend: start",
-      "url": "http://localhost:4200",
-      "webRoot": "${workspaceFolder}/SeaFoodRestaurant(FE)/seafood-restaurant",
-      "urlTimeout": 60000
-    },
-    {
-      "name": "Backend: Spring Boot",
       "type": "java",
+      "name": "Debug Spring Boot BE",
       "request": "launch",
       "mainClass": "com.example.Seafood_Restaurant.SeafoodRestaurantApplication",
       "projectName": "Seafood-Restaurant"
+    },
+    {
+      "type": "chrome",
+      "name": "Debug Angular FE",
+      "request": "launch",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/SeaFoodRestaurant(FE)/seafood-restaurant",
+      "preLaunchTask": "Start Angular FE",
+      "urlTimeout": 60000
     }
   ],
   "compounds": [
     {
-      "name": "Full Stack: Frontend + Backend",
-      "configurations": [
-        "Backend: Spring Boot",
-        "Frontend: Chrome"
-      ]
+      "name": "Run Fullstack",
+      "configurations": ["Debug Spring Boot BE", "Debug Angular FE"]
     }
   ]
 }
